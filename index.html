@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求方案 — 小河马线上商城代销雀巢大仓商品</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #fafbfc;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #555;
+    --border: #e0e4e8;
+    --accent: #1a73e8;
+    --accent-light: #e8f0fe;
+    --tag-p0: #d93025;
+    --tag-p0-bg: #fce8e6;
+    --tag-p1: #e37400;
+    --tag-p1-bg: #fef7e0;
+    --tag-p2: #1a73e8;
+    --tag-p2-bg: #e8f0fe;
+    --callout-info-bg: #e8f0fe;
+    --callout-info-border: #1a73e8;
+    --callout-warn-bg: #fef7e0;
+    --callout-warn-border: #f9a825;
+    --callout-risk-bg: #fce8e6;
+    --callout-risk-border: #d93025;
+    --shadow: 0 1px 4px rgba(0,0,0,0.06);
+    --radius: 8px;
+    --nav-h: 52px;
+    --sidebar-w: 240px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.75;
+    font-size: 15px;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* === Sidebar === */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    box-shadow: var(--shadow);
+  }
+  .sidebar-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: var(--text);
+  }
+  .sidebar-header .meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+  .sidebar-nav::-webkit-scrollbar { width: 3px; }
+  .sidebar-nav::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+  .sidebar-nav a {
+    display: block;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 0 20px 20px 0;
+    margin-right: 10px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-nav a:hover { color: var(--accent); background: var(--accent-light); }
+  .sidebar-nav a.active { color: var(--accent); font-weight: 600; background: var(--accent-light); }
+  .sidebar-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* === Main Container === */
+  .main {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+  }
+  .container {
+    padding: 32px 48px 80px;
+  }
+
+  /* === Header === */
+  .doc-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .doc-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .doc-header .meta { font-size: 13px; color: var(--text-secondary); }
+  .doc-header .meta .tag { margin-left: 8px; font-size: 11px; }
+
+  /* === Section === */
+  section { margin-bottom: 40px; scroll-margin-top: 20px; }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-left: 12px;
+    border-left: 4px solid var(--accent);
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+  }
+  p { margin: 8px 0; color: var(--text); }
+
+  /* === Tags === */
+  .tag {
+    display: inline-block;
+    padding: 1px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+  .tag-p0 { background: var(--tag-p0-bg); color: var(--tag-p0); }
+  .tag-p1 { background: var(--tag-p1-bg); color: var(--tag-p1); }
+  .tag-p2 { background: var(--tag-p2-bg); color: var(--tag-p2); }
+  .tag-new { background: #e6f4ea; color: #188038; }
+  .tag-done { background: #e6f4ea; color: #188038; }
+  .tag-pending { background: var(--tag-p1-bg); color: var(--tag-p1); }
+
+  /* === Card === */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { margin-top: 0; }
+
+  /* === Tables === */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  thead th {
+    background: #f1f3f4;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+  tbody tr:hover { background: #fafbfc; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* === Callouts === */
+  .callout {
+    margin: 14px 0;
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .callout-info { background: var(--callout-info-bg); border-left: 4px solid var(--callout-info-border); }
+  .callout-warn { background: var(--callout-warn-bg); border-left: 4px solid var(--callout-warn-border); }
+  .callout-risk { background: var(--callout-risk-bg); border-left: 4px solid var(--callout-risk-border); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  /* === Mermaid === */
+  .mermaid-wrap {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+  }
+  .mermaid-wrap pre.mermaid { margin: 0; font-size: 14px; }
+  .mermaid-wrap svg { max-width: 100% !important; height: auto !important; }
+
+  /* === Background section === */
+  .bg-section {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+  }
+
+  /* === KV Row === */
+  .kv {
+    display: flex;
+    gap: 12px;
+    padding: 4px 0;
+    font-size: 14px;
+  }
+  .kv-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+  .kv-value { flex: 1; }
+
+  /* === Blockquote === */
+  blockquote {
+    margin: 12px 0;
+    padding: 10px 16px;
+    background: #f8f9fa;
+    border-left: 3px solid #d0d4d8;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* === Hierarchy list === */
+  .dec-list { padding-left: 20px; }
+  .dec-list li { margin: 4px 0; }
+
+  /* === Footer === */
+  .doc-footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* === Mobile === */
+  .mobile-toggle {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 300;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 199;
+  }
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: calc(-1 * var(--sidebar-w));
+      transition: left 0.25s;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-overlay.show { display: block; }
+    .mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .container { padding: 20px 14px 60px; }
+    .doc-header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== Sidebar Overlay (mobile) ==================== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== Sidebar ==================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>小河马 × 雀巢 需求方案</h2>
+    <div class="meta">方案已确认</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <a href="#sec-background">一、项目背景</a>
+    <a href="#sec-overview">二、业务流程</a>
+    <a href="#sec-participants">三、参与者</a>
+    <a href="#sec-forward">四、正向链路</a>
+    <a href="#sec-reverse">五、逆向链路</a>
+    <a href="#sec-zt-scope">六、中台调整范围</a>
+    <a href="#sec-risks">七、流程风险</a>
+  </nav>
+  <div class="sidebar-footer">2026-06-14 · v1.0</div>
+</aside>
+
+<!-- ==================== Main ==================== -->
+<div class="main">
+<div class="container">
+
+<!-- Header -->
+<div class="doc-header">
+  <h1>小河马线上商城代销雀巢大仓商品 — 需求方案</h1>
+  <div class="meta">
+    基于需求提炼报告 | 覆盖完整正向链路和逆向退货链路
+    <span class="tag tag-done">已确认</span>
+  </div>
+</div>
+
+<!-- ==================== 一、项目背景 ==================== -->
+<section id="sec-background">
+  <h2>一、项目背景</h2>
+  <div class="bg-section">
+  <p>雀巢希望借助<strong>小河马线上商城</strong>，由母婴门店帮助代销"佳膳优选"直供商品。消费者在小河马商城线上下单，<strong>雀巢大仓</strong>直发快递给消费者，门店获得 <strong>20% 佣金</strong>。</p>
+
+  <p>佣金直接打给门店个人不合规，需借助<strong>中台 → 达生</strong>的任务办单链路，以积点形式发放佣金，门店通过达生提现。</p>
+
+  <p>本次仅涉及小河马商城订单的<strong>正向积点结算</strong>和<strong>逆向退货扣减</strong>，不涉及资金预充值。</p>
+  </div>
+</section>
+
+<!-- ==================== 二、业务流程概述 ==================== -->
+<section id="sec-overview">
+  <h2>二、业务流程概述</h2>
+  <p>本系统涉及四条核心链路，按执行先后顺序排列：</p>
+
+  <table>
+    <thead>
+      <tr><th>序号</th><th>链路</th><th>触发方</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>①</td>
+        <td><strong>任务初始化</strong></td>
+        <td>达生</td>
+        <td>达生创建长期任务（至年底）→ 通知中台 → 中台维护 SKU 与门店 → 推送小河马 → 账号同步 → 自动领取</td>
+      </tr>
+      <tr>
+        <td>②</td>
+        <td><strong>正向下单 → 积点结算</strong></td>
+        <td>消费者</td>
+        <td>小河马商城下单支付 → A10 推送中台 → 渠道分流（跳过原中台任务校验）→ 推送达生 → 按"任务+产品"基点发积点</td>
+      </tr>
+      <tr>
+        <td>③</td>
+        <td><strong>逆向退货 → 积点扣减</strong></td>
+        <td>消费者</td>
+        <td>小河马商城退货 → A10 推送退货单 → 中台记录 NHS → 同步达生 → 达生扣减待发放积点</td>
+      </tr>
+      <tr>
+        <td>④</td>
+        <td><strong>大仓发货</strong>（旁路）</td>
+        <td>雀巢大仓</td>
+        <td>大仓根据订单直发快递给消费者，与积点链路解耦</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>⚠️ 关键约束</strong>
+    小河马商城以确认收货为结算触发节点。确认收货前可退货（触发链路③）；确认收货后不可退货，或退货不影响达生绩点发放。
+  </div>
+</section>
+
+<!-- ==================== 三、参与者定义 ==================== -->
+<section id="sec-participants">
+  <h2>三、参与者定义</h2>
+  <table>
+    <thead>
+      <tr><th>缩写</th><th>全称</th><th>角色说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>消费者</td><td>终端用户</td><td>在小河马商城下单、收货、退货</td></tr>
+      <tr><td>小河马商城</td><td>小河马线上商城</td><td>消费者下单入口，通过 A10 推送订单到中台</td></tr>
+      <tr><td>中台(云机汇)</td><td>雀巢任务中台（NHS）</td><td>任务/SKU/门店维护、订单接收、渠道分流、数据推送</td></tr>
+      <tr><td>达生</td><td>达生系统</td><td>任务创建与领取、积点基点配置、积点结算与发放、扣减</td></tr>
+      <tr><td>门店店长</td><td>母婴店店主</td><td>佣金接收方，在达生提现</td></tr>
+      <tr><td>雀巢大仓</td><td>雀巢粤海仓</td><td>大仓直发商品给消费者</td></tr>
+      <tr><td>汇付天下</td><td>支付分账平台</td><td>小河马侧支付分账服务</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================== 四、完整正向链路 ==================== -->
+<section id="sec-forward">
+  <h2>四、完整正向链路</h2>
+
+  <div class="mermaid-wrap">
+    <pre class="mermaid">
+sequenceDiagram
+    participant DS as 达生
+    participant ZT as 中台(云机汇)
+    participant XHM as 小河马商城
+    participant C as 消费者
+    participant S as 门店店长
+    participant CK as 雀巢大仓
+
+    Note over DS,S: ══════ Stage 1: 任务初始化（一次性操作） ══════
+
+    rect rgb(240, 255, 240)
+        Note over DS,ZT: ① 达生建任务 → 通知中台
+        DS->>DS: 创建长期特殊任务<br/>有效期：至当年年底<br/>类型：线上商城任务(是否需要 可写死一个任务编号)
+        DS->>ZT: A1 任务信息同步<br/>任务编号、有效期、任务类型
+        activate ZT
+
+        Note over ZT: ② 中台维护 SKU + 门店范围等
+        ZT->>ZT: 维护该任务可参与的 SKU 列表<br/>维护该任务可参与的门店清单
+        ZT->>ZT: 配置：小河马商城任务<br/>配额方案待讨论确认<br/>如需配额，需在现有配额配置页<br/>增加任务编号关联
+    end
+
+    rect rgb(255, 245, 238)
+        Note over ZT,XHM: ③ 推送任务到小河马
+        ZT->>XHM: B3 任务信息推送<br/>任务编号、有效期、门店范围、SKU 列表
+        activate XHM
+        XHM->>XHM: 存储任务映射<br/>识别线上商城办单任务
+    end
+
+    rect rgb(245, 240, 255)
+        Note over XHM,DS: ④ 门店账号同步 → 自动领取
+        XHM->>ZT: A3-1 门店账号同步<br/>门店信息 + 店主/店员账号
+        ZT->>DS: 同步门店账号（关联任务编号）
+        activate DS
+
+        DS->>DS: 接收账号 → 首次需手动领取
+        Note over DS: 店主/店员账号均可<br/>首次需手动领取长期任务
+
+        DS-->>ZT: A8 领取任务同步
+        deactivate DS
+        ZT-->>XHM: A9 领取任务推送
+        deactivate XHM
+
+        Note over DS: ⑤ 达生配置积点基点<br/>by 产品 by 任务维度
+        DS->>DS: 配置各 SKU 佣金基点
+        deactivate ZT
+    end
+
+    Note over C,S: ══════ Stage 2: 消费者下单 → 积点结算 ══════
+
+    rect rgb(240, 248, 255)
+        Note over C,XHM: ⑥ 消费者下单
+        C->>XHM: 浏览商城，选择商品（佳膳优选），下单支付
+        activate XHM
+        Note over XHM: 支付成功，生成订单<br/>仅含 SKU、数量、订单号<br/>无溯源码
+        XHM->>XHM: 生成订单号
+
+        Note over CK: 旁路：大仓根据订单发货
+        XHM-->>CK: 订单信息（批次号+订单号）
+        CK-->>C: 大仓直发快递
+    end
+
+    rect rgb(255, 250, 240)
+        Note over XHM,ZT: ⑦ A10 推送办单数据
+        XHM->>ZT: A10 门店任务售出办单数据同步<br/>channelType=XHM_MALL<br/>transactionType=SALE<br/>SKU、数量、订单号<br/>（不传 source_code）
+        deactivate XHM
+        activate ZT
+
+        ZT->>ZT: 按 channelType 分流<br/>XHM_MALL → 走商城通道
+        ZT->>ZT: 跳过任务校验、撞库校验<br/>外码：附特定标识开头随机值<br/>外码扫码状态标记为有效<br/>内码：不处理、不传达生
+
+        Note over ZT,DS: ⑧ 推送达生积点结算
+        ZT->>DS: 推送办单数据<br/>订单号、SKU、数量<br/>外码附随机值+状态有效<br/>内码不传（达生仅以外码判定积点）
+        deactivate ZT
+        activate DS
+
+        DS->>DS: 按"任务+产品"维度<br/>查询对应积点
+        DS->>DS: 计算佣金 = SKU数量 × 积点
+        DS->>S: 积点发放到店主账户
+
+        Note over S: 店主可在达生提现<br/>佣金到账
+        deactivate DS
+    end
+    </pre>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>📌 退货判断</strong>
+    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验，例如：退货数量需 ≤ 该笔订单销售数量。
+  </div>
+</section>
+
+<!-- ==================== 五、逆向链路 ==================== -->
+<section id="sec-reverse">
+  <h2>五、逆向链路</h2>
+
+  <div class="mermaid-wrap">
+    <pre class="mermaid">
+sequenceDiagram
+    participant C as 消费者
+    participant XHM as 小河马商城
+    participant HF as 汇付天下
+    participant ZT as 中台(云机汇)
+    participant DS as 达生
+    participant S as 门店店长
+
+    Note over C,S: ═══ 逆向链路：A10 退货单 → NHS记录 → 达生扣减 ═══
+
+    C->>XHM: 发起退货申请
+    activate XHM
+    Note over XHM: ⚠️ 退货申请以小河马商城判断为准<br/>中台只做基础校验<br/>（如：退货数量 ≤ 销售数量）
+
+    rect rgb(255, 240, 240)
+        Note over XHM,HF: ⑨ 小河马退款
+        XHM->>HF: 发起退款
+        activate HF
+        HF->>HF: 处理退款资金回转
+        HF-->>XHM: 退款完成
+        deactivate HF
+
+        Note over XHM,ZT: ⑩ A10 推送退货单（复用同一接口）
+        XHM->>ZT: A10 门店任务售出办单数据同步<br/>channelType=XHM_MALL<br/>transactionType=RETURN<br/>orderId、returnItems: SKU+数量
+
+        alt 部分退货
+            Note over ZT: 接收部分退货明细<br/>按 SKU+数量比例处理
+        else 整单退
+            Note over ZT: 接收整单退货<br/>按订单全额处理
+        end
+        deactivate XHM
+        activate ZT
+
+        ZT->>ZT: 记录退货信息到 NHS 后台<br/>订单号、退货SKU、退货数量
+    end
+
+    rect rgb(255, 245, 238)
+        Note over ZT,DS: ⑪ 同步达生扣减待发放佣金
+        ZT->>DS: 同步退货信息<br/>orderId、SKU、退货数量
+        deactivate ZT
+        activate DS
+
+        DS->>DS: 定位对应门店店主账号<br/>扣减待发放佣金积点
+
+        alt 待发放积点充足
+            DS->>DS: 按退货 SKU+数量<br/>扣减对应积点
+            DS-->>S: 待发放积点余额更新
+            Note over S: 扣减成功
+        else 积点已提现/不足
+            DS->>DS: 扣减失败，达生内部处理
+            Note over DS: 不通知中台<br/>达生侧自行记录处理
+        end
+        deactivate DS
+    end
+    </pre>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>📌 退货判断</strong>
+    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验，例如：退货数量需 ≤ 该笔订单销售数量。
+  </div>
+</section>
+
+<!-- ==================== 六、中台调整范围 ==================== -->
+<section id="sec-zt-scope">
+  <h2>六、中台调整范围</h2>
+
+  <h3>1️⃣ 正向链路</h3>
+
+  <div class="card">
+    <h3>1. 配额相关</h3>
+    <div class="callout callout-warn">
+      <strong>⚠️ 待定</strong>
+      配额方案待讨论确认。如需限制大区配额和门店配额，需在现有配额配置页面增加任务编号关联，按任务维度配置配额。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>2. A10 门店任务售出办单数据同步接口 — 字段变更</h3>
+    <table>
+      <thead>
+        <tr><th>字段</th><th>原状态</th><th>新状态</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>channelType</code>（渠道类型）</td>
+          <td>—</td>
+          <td><span class="tag tag-new">🆕 新增</span></td>
+          <td>枚举：<code>XHM_MALL</code>（小河马商城）/ <code>TASK_REDPACKET</code>（任务红包）</td>
+        </tr>
+        <tr>
+          <td><code>transactionType</code>（交易类型/订单类型）</td>
+          <td>—</td>
+          <td><span class="tag tag-new">🆕 新增</span></td>
+          <td>枚举：<code>SALE</code>（销售单）/ <code>RETURN</code>（退货单）</td>
+        </tr>
+        <tr>
+          <td><code>source_code</code>（溯源码）</td>
+          <td><strong>必填</strong></td>
+          <td><span class="tag tag-new">🆕 改为非必填</span></td>
+          <td>小河马商城订单无溯源码，该字段改为非必填</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>3. 小河马商城渠道处理逻辑</h3>
+    <p>当 <code>channelType = XHM_MALL</code> 时：</p>
+    <ul class="dec-list">
+      <li>中台<strong>不进行</strong>原有的任务逻辑校验</li>
+      <li>直接以<strong>有效状态</strong>通过 <strong>A12-中台推送消费者开罐扫码数据</strong>接口推送达生</li>
+      <li>内码的扫码数据<strong>不传</strong></li>
+      <li><code>source_code</code> 需生成一个<strong>特殊标识开头的随机字符串</strong>，标记为虚拟生成的溯源码</li>
+    </ul>
+  </div>
+
+  <h3>2️⃣ 逆向链路</h3>
+
+  <div class="card">
+    <h3>1. 逆向退货流程</h3>
+    <ul class="dec-list">
+      <li>逆向链路为<strong>新增流程</strong>，仍复用 <strong>A10-门店任务售出办单数据同步</strong>接口</li>
+      <li>当 <code>transactionType = RETURN</code> 时，中台接收小河马的退货订单数量</li>
+      <li>中台进行<strong>基础校验</strong>：退货数量不能大于该笔订单的销售数量</li>
+      <li>中台接收到退货订单后，存入<strong>单独的退货记录表</strong>，并与售出单进行关联</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>2. 通知达生退货处理</h3>
+    <p>中台通过 <strong>A12-中台推送消费者开罐扫码数据</strong>接口通知达生进行退货单处理，其中<strong>产品售出数量为负数</strong>。</p>
+  </div>
+</section>
+
+<!-- ==================== 七、识别的流程风险 ==================== -->
+<section id="sec-risks">
+  <h2>七、识别的流程风险</h2>
+
+  <table>
+    <thead>
+      <tr><th>风险点</th><th>所在图</th><th>说明</th><th>建议</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>R1：达生仅以外码判定积点的兼容性</strong></td>
+        <td>图4</td>
+        <td>中台对 XHM_MALL 订单：外码附随机值+标记有效，内码不处理不传达生。达生仅以外码状态判定积点发放是否可行？</td>
+        <td>需与达生确认：仅接收外码随机值+有效状态，不接收内码，达生校验是否通过</td>
+      </tr>
+      <tr>
+        <td><strong>R2：A10 同时承载正向和逆向</strong></td>
+        <td>图4/5</td>
+        <td>同一接口通过 transactionType 区分 SALE/RETURN，接口复杂度增加</td>
+        <td>确保幂等性设计：订单号+transactionType 作为幂等键</td>
+      </tr>
+      <tr>
+        <td><strong>R3：门店绑定链路缺失</strong></td>
+        <td>图4</td>
+        <td>账号同步假设小河马已有门店绑定机制，但消费者如何映射到门店未确认</td>
+        <td>需与小河马（panda）确认消费者→门店的绑定方式，否则佣金归属无法闭环</td>
+      </tr>
+      <tr>
+        <td><strong>R4：退货与确认收货的时序依赖</strong></td>
+        <td>图5</td>
+        <td>小河马商城以确认收货为结算触发节点：未确认收货可申请退货；确认收货后不可退货（或退货不影响达生绩点发放）</td>
+        <td>正向链路中标注确认收货节点；逆向链路中标注仅未确认收货可触发退货流程</td>
+      </tr>
+      <tr>
+        <td><strong>R5：长期任务对达生按月管理的影响</strong></td>
+        <td>图4</td>
+        <td>现有任务按月管理，至年底的长期任务可能触发达生过期清理逻辑</td>
+        <td>与达生确认长期任务对现有调度/清理机制的影响</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Footer -->
+<div class="doc-footer">
+  生成时间：2026-06-14 · 基于用户确认的完整链路描述更新
+</div>
+
+</div><!-- .container -->
+</div><!-- .main -->
+
+<!-- Mobile Toggle -->
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">☰</button>
+
+<!-- ==================== Scripts ==================== -->
+<script>
+  // Init Mermaid
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    securityLevel: 'loose',
+    sequence: { showSequenceNumbers: false, actorMargin: 80, messageMargin: 40, boxMargin: 10 }
+  });
+
+  // Scroll spy
+  const sidebarNav = document.getElementById('sidebarNav');
+  const navLinks = sidebarNav.querySelectorAll('a');
+  const sections = Array.from(navLinks).map(a => document.querySelector(a.getAttribute('href')));
+
+  function updateNav() {
+    const scrollY = window.scrollY + 120;
+    let current = null;
+    for (let i = sections.length - 1; i >= 0; i--) {
+      if (sections[i] && sections[i].offsetTop <= scrollY) { current = sections[i]; break; }
+    }
+    navLinks.forEach(a => a.classList.remove('active'));
+    if (current) {
+      const target = sidebarNav.querySelector('a[href="#' + current.id + '"]');
+      if (target) target.classList.add('active');
+    }
+  }
+
+  let scrollTimer;
+  window.addEventListener('scroll', function() {
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(updateNav, 60);
+  });
+  updateNav();
+
+  // Smooth scroll + close mobile sidebar
+  navLinks.forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      closeSidebar();
+    });
+  });
+
+  // Mobile sidebar toggle
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
+
+  document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) closeSidebar();
+  });
+</script>
+
+</body>
+</html>
