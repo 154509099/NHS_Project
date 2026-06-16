@@ -508,7 +508,7 @@ sequenceDiagram
 
   <div class="callout callout-info">
     <strong>📌 退货判断</strong>
-    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验，例如：退货数量需 ≤ 该笔订单销售数量。
+    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验：校验销售单号是否存在、退货数量 ≤ 销售数量、是否重复退货等。
   </div>
 </section>
 
@@ -530,7 +530,7 @@ sequenceDiagram
 
     C->>XHM: 发起退货申请
     activate XHM
-    Note over XHM: ⚠️ 退货申请以小河马商城判断为准<br/>中台只做基础校验<br/>（如：退货数量 ≤ 销售数量）
+    Note over XHM: ⚠️ 退货申请以小河马商城判断为准<br/>中台做基础校验<br/>（校验销售单号、退货数量、重复退货等）
 
     rect rgb(255, 240, 240)
         Note over XHM,HF: ⑨ 小河马退款
@@ -577,7 +577,7 @@ sequenceDiagram
 
   <div class="callout callout-info">
     <strong>📌 退货判断</strong>
-    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验，例如：退货数量需 ≤ 该笔订单销售数量。
+    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验：校验销售单号是否存在、退货数量 ≤ 销售数量、是否重复退货等。
   </div>
 </section>
 
@@ -603,7 +603,7 @@ sequenceDiagram
       </thead>
       <tbody>
         <tr>
-          <td><code>channelType</code>（渠道类型）</td>
+          <td><code>channelType</code>（业务类型）</td>
           <td>—</td>
           <td><span class="tag tag-new">🆕 新增</span></td>
           <td>枚举：<code>XHM_MALL</code>（小河马商城）/ <code>TASK_REDPACKET</code>（任务红包）</td>
@@ -631,7 +631,7 @@ sequenceDiagram
       <li>中台<strong>不进行</strong>原有的任务逻辑校验</li>
       <li>直接以<strong>有效状态</strong>通过 <strong>A12-中台推送消费者开罐扫码数据</strong>接口推送达生</li>
       <li>内码的扫码数据<strong>不传</strong></li>
-      <li><code>source_code</code> 需生成一个<strong>特殊标识开头的随机字符串</strong>，标记为虚拟生成的溯源码</li>
+      <li><code>source_code</code> 需生成一个<strong>特殊标识开头的随机字符串</strong>，标记为虚拟生成的溯源码（建议由小河马侧生成提供）</li>
     </ul>
   </div>
 
@@ -642,7 +642,14 @@ sequenceDiagram
     <ul class="dec-list">
       <li>逆向链路为<strong>新增流程</strong>，仍复用 <strong>A10-门店任务售出办单数据同步</strong>接口</li>
       <li>当 <code>transactionType = RETURN</code> 时，中台接收小河马的退货订单数量</li>
-      <li>中台进行<strong>基础校验</strong>：退货数量不能大于该笔订单的销售数量</li>
+      <li>中台进行<strong>基础校验</strong>：
+        <ul class="dec-list">
+          <li>校验销售单号在中台是否存在</li>
+          <li>校验退货SKU是否存在于原销售单中</li>
+          <li>退货数量不能大于该笔订单的销售数量</li>
+          <li>校验该笔订单是否已全额退货（防止重复退）</li>
+        </ul>
+      </li>
       <li>中台接收到退货订单后，存入<strong>单独的退货记录表</strong>，并与售出单进行关联</li>
     </ul>
   </div>
