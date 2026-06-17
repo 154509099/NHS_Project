@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雀巢益生菌买赠活动 PRD V1.0</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    /* ===== 全局：字体、颜色、排版变量 ===== */
+    :root {
+      --c-primary: #1890FF;
+      --c-primary-light: #E8F4FF;
+      --c-text: #1F2329;
+      --c-text-sub: #4E5969;
+      --c-text-mute: #86909C;
+      --c-bg: #F5F6F8;
+      --c-card: #fff;
+      --c-border: #E8EAEC;
+      --c-divider: #F2F4F7;
+      --c-warn-bg: #FFF7E8;
+      --c-warn-text: #8B5A00;
+      --c-danger: #FF4D4F;
+      --c-success: #52C41A;
+      --c-confirm-bg: #FFF1E8;
+      --c-confirm-text: #D46B08;
+      --c-conflict-bg: #FFF1F0;
+      --c-conflict-text: #CF1322;
+      --c-todo-bg: #F6FFED;
+      --c-todo-text: #237804;
+      --sidebar-w: 260px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 15px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+      color: var(--c-text); background: var(--c-bg); line-height: 1.7;
+    }
+
+    /* ===== 布局：左侧导航 + 右侧内容 ===== */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ===== 左侧导航 ===== */
+    #sidebar {
+      width: var(--sidebar-w); background: #F7F8FA; color: var(--c-text-sub);
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+      display: flex; flex-direction: column; overflow-y: auto;
+      font-size: 13px; transition: transform .25s;
+      border-right: 1px solid var(--c-border);
+    }
+    #sidebar .sidebar-header {
+      padding: 20px 20px 16px; background: #fff; color: var(--c-text);
+      font-size: 16px; font-weight: 700; flex-shrink: 0; line-height: 1.5;
+      border-bottom: 1px solid var(--c-divider);
+      letter-spacing: 0.5px; position: relative;
+    }
+    #sidebar .sidebar-header::after {
+      content: ''; display: block; width: 32px; height: 3px;
+      background: var(--c-primary); border-radius: 2px; margin-top: 8px;
+    }
+    /* 折叠按钮 */
+    #sidebar-toggle {
+      position: absolute; right: 10px; top: 16px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: transparent; color: var(--c-text-mute); border: none;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all .2s; z-index: 1;
+    }
+    #sidebar-toggle:hover { background: #EDF0F4; color: var(--c-text); }
+    #sidebar-toggle svg { width: 14px; height: 14px; transition: transform .25s; }
+
+    /* ===== 折叠状态 ===== */
+    body.sidebar-collapsed #sidebar {
+      width: 52px;
+    }
+    body.sidebar-collapsed #sidebar .sidebar-header {
+      padding: 16px 10px 10px; font-size: 0;
+    }
+    body.sidebar-collapsed #sidebar .sidebar-header::after { display: none; }
+    body.sidebar-collapsed #sidebar #toc { display: none; }
+    body.sidebar-collapsed #sidebar-toggle { right: 14px; top: 12px; }
+    body.sidebar-collapsed #content { margin-left: 52px; max-width: 100%; }
+    #sidebar ul { list-style: none; padding: 12px 0; flex: 1; }
+    #sidebar li a {
+      display: block; margin: 1px 10px; padding: 9px 14px;
+      color: var(--c-text-sub); border-radius: 6px;
+      text-decoration: none; transition: all .2s ease; cursor: pointer;
+      font-size: 13px; line-height: 1.4;
+    }
+    #sidebar li a:hover { background: #EDF0F4; color: var(--c-text); }
+    #sidebar li a.active {
+      background: #E8F2FF; color: var(--c-primary); font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(24,144,255,.12);
+    }
+    #sidebar li a.sub { margin-left: 22px; padding: 7px 14px; font-size: 12px; }
+    #sidebar li a.sub-sub { margin-left: 34px; padding: 6px 14px; font-size: 11.5px; }
+    /* 目录分组间隐式分隔 */
+    #sidebar ul ul { padding: 4px 0 12px; }
+
+    /* 汉堡菜单按钮 */
+    #menu-toggle {
+      display: none; position: fixed; top: 10px; left: 10px; z-index: 200;
+      width: 36px; height: 36px; background: #fff; color: var(--c-text); border: 1px solid var(--c-border);
+      border-radius: 4px; font-size: 20px; cursor: pointer; align-items: center; justify-content: center;
+    }
+
+    /* ===== 右侧内容区 ===== */
+    #content {
+      margin-left: var(--sidebar-w); padding: 40px 48px 100px;
+      max-width: 1200px;
+    }
+    #content h1 {
+      font-size: 28px; font-weight: 800; color: var(--c-text);
+      padding-bottom: 20px; margin-bottom: 32px; letter-spacing: -0.5px;
+      border-bottom: 2px solid var(--c-primary);
+    }
+    #content h2 {
+      font-size: 21px; font-weight: 700; color: var(--c-text);
+      margin-top: 48px; margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--c-divider);
+      display: flex; align-items: center; gap: 10px;
+    }
+    #content h2::before {
+      content: ''; display: inline-block; width: 5px; height: 22px;
+      background: var(--c-primary); border-radius: 3px; flex-shrink: 0;
+    }
+    #content h3 {
+      font-size: 17px; font-weight: 700; color: var(--c-text);
+      margin-top: 32px; margin-bottom: 14px; padding-left: 12px;
+      border-left: 3px solid var(--c-primary);
+    }
+    #content h4 {
+      font-size: 15px; font-weight: 600; color: var(--c-text);
+      margin-top: 24px; margin-bottom: 10px;
+    }
+    #content h5 {
+      font-size: 14px; font-weight: 600; color: var(--c-text-sub);
+      margin-top: 18px; margin-bottom: 8px;
+    }
+    #content p { margin-bottom: 14px; color: var(--c-text-sub); line-height: 1.8; }
+    #content section { margin-bottom: 12px; }
+
+    /* 列表 */
+    #content ul, #content ol { margin: 8px 0 16px 20px; color: var(--c-text-sub); line-height: 1.9; }
+    #content li { margin-bottom: 4px; }
+
+    /* ===== 表格 ===== */
+    table {
+      width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0 24px;
+      border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--c-border);
+    }
+    thead th {
+      background: #F4F6F9; text-align: left; font-weight: 600; color: var(--c-text);
+      padding: 12px 16px; border-bottom: 2px solid var(--c-border); white-space: nowrap;
+      font-size: 12.5px; text-transform: none; letter-spacing: 0.3px;
+    }
+    tbody td {
+      padding: 11px 16px; border-bottom: 1px solid var(--c-divider); color: var(--c-text-sub);
+      font-size: 13px; vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #FAFBFC; }
+    tbody tr:hover { background: #F0F5FF; }
+
+    /* ===== 标签：待确认、待开发、冲突 ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px;
+      font-weight: 600; margin-left: 6px; vertical-align: middle; white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
+    .tag-confirm { background: var(--c-warn-bg); color: var(--c-warn-text); }
+    .tag-todo { background: var(--c-todo-bg); color: var(--c-todo-text); }
+    .tag-conflict { background: var(--c-conflict-bg); color: var(--c-conflict-text); }
+    .tag-note { background: #F0F5FF; color: #1D39C4; }
+
+    /* 醒目提示块 */
+    .callout {
+      padding: 14px 18px; border-radius: 8px; margin: 16px 0; font-size: 13.5px;
+      line-height: 1.8;
+    }
+    .callout.warn { background: var(--c-warn-bg); border-left: 4px solid #FAAD14; color: var(--c-warn-text); }
+    .callout.info { background: var(--c-primary-light); border-left: 4px solid var(--c-primary); color: #003A8C; }
+    .callout.danger { background: var(--c-conflict-bg); border-left: 4px solid var(--c-danger); color: var(--c-conflict-text); }
+
+    /* ===== Mermaid 容器 ===== */
+    .mermaid {
+      background: #fff; border: 1px solid var(--c-border); border-radius: 10px;
+      padding: 20px 24px; margin: 16px 0; overflow-x: auto; font-size: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    /* ===== iframe 原型嵌入 ===== */
+    .proto-iframe-wrapper {
+      margin: 16px 0; border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    .proto-iframe-toggle {
+      display: flex; align-items: center; gap: 8px; padding: 12px 18px;
+      background: #F8F9FB; cursor: pointer; user-select: none; font-size: 13px;
+      color: var(--c-text-sub); transition: background .2s; font-weight: 500;
+    }
+    .proto-iframe-toggle:hover { background: #EDF0F4; }
+    .proto-iframe-toggle .toggle-icon { transition: transform .25s; font-size: 10px; display: inline-block; }
+    .proto-iframe-wrapper.open .proto-iframe-toggle .toggle-icon { transform: rotate(90deg); }
+    .proto-iframe-body {
+      display: none; width: 100%; height: 900px; border: none;
+    }
+    .proto-iframe-wrapper.open .proto-iframe-body { display: block; }
+
+    /* ===== 代码块 ===== */
+    pre {
+      background: #F6F8FA; border: 1px solid var(--c-border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; font-size: 13px; line-height: 1.7; margin: 12px 0;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    }
+    code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em; }
+
+    /* ===== 需求编号 ===== */
+    .fr-id { font-weight: 700; color: var(--c-primary); font-family: monospace; font-size: 13px; }
+
+    /* ===== 溯源表 ===== */
+    .trace-table { font-size: 12px; }
+    .trace-table td { padding: 8px 12px; }
+
+    /* ===== 功能模块卡片 ===== */
+    .module-intro {
+      background: #fff; border: 1px solid var(--c-border); border-radius: 8px;
+      padding: 18px 22px; margin: 16px 0; box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .module-intro p:last-child { margin-bottom: 0; }
+
+    /* ===== 流程步骤示意 ===== */
+    .flow-steps {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; padding: 0;
+      list-style: none;
+    }
+    .flow-steps li {
+      background: var(--c-primary-light); color: var(--c-primary); font-weight: 600;
+      padding: 6px 14px; border-radius: 20px; font-size: 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .flow-steps li .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--c-primary);
+      color: #fff; font-size: 10px; font-weight: 700;
+    }
+
+    /* ===== 打印样式 ===== */
+    @media print {
+      #sidebar, #menu-toggle, .proto-iframe-wrapper { display: none !important; }
+      #content { margin-left: 0; max-width: 100%; padding: 20px; }
+      body { font-size: 12px; }
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 900px) {
+      #sidebar { transform: translateX(-100%); width: var(--sidebar-w) !important; }
+      #sidebar.open { transform: translateX(0); }
+      #sidebar #toc { display: block; }
+      #content { margin-left: 0 !important; padding: 20px 16px; }
+      #menu-toggle { display: flex; }
+      body.sidebar-collapsed #sidebar { transform: translateX(-100%); }
+    }
+  </style>
+</head>
+<body>
+  <button id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+  <!-- ===== 左侧导航 ===== -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      雀巢益生菌买赠活动<br>PRD V1.0
+      <button id="sidebar-toggle" title="折叠导航">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 2 L4 8 L11 14"/>
+        </svg>
+      </button>
+    </div>
+    <ul id="toc">
+      <li><a href="#s1">一、文档信息</a></li>
+      <li><a href="#s2">二、背景与目标</a></li>
+      <li>
+        <a href="#s3">三、用户与场景</a>
+        <ul>
+          <li><a class="sub" href="#s3-1">3.1 目标用户画像</a></li>
+          <li><a class="sub" href="#s3-2">3.2 核心使用场景</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#s4">四、功能需求详情</a>
+        <ul>
+          <li><a class="sub" href="#s4-1">4.1 后台管理员——大单礼活动管理</a></li>
+          <li><a class="sub" href="#s4-2">4.2 门店店员——活动选择与办单</a></li>
+          <li><a class="sub" href="#s4-3">4.3 门店店员——办单记录查询</a></li>
+          <li><a class="sub" href="#s4-4">4.4 消费者——扫码兑奖（能量加油站）</a></li>
+        </ul>
+      </li>
+      <li><a href="#s5">五、非功能需求</a></li>
+      <li><a href="#s6">六、附录</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== 主内容区 ===== -->
+  <main id="content">
+
+    <!-- 文档标题 -->
+    <h1>雀巢益生菌买赠活动 · 产品需求文档 (PRD)</h1>
+
+    <!-- 一、文档信息 -->
+    <section id="s1">
+      <h2>一、文档信息</h2>
+      <table>
+        <tbody>
+          <tr><td style="width:140px; font-weight:500;">版本号</td><td>V1.0（AI 初稿）</td></tr>
+          <tr><td>创建日期</td><td>2026-06-17</td></tr>
+          <tr><td>输入来源</td><td>交互原型（2 个文件）/ 业务时序图.md / 必看-基础资料.md</td></tr>
+          <tr><td>生成方式</td><td>AI 逆向提取（原型分析 + 时序图对账 + 基础资料融合）</td></tr>
+          <tr><td>变更记录</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 二、背景与目标 -->
+    <section id="s2">
+      <h2>二、背景与目标</h2>
+
+      <h3>业务背景</h3>
+      <p>云机汇为雀巢特批奶粉部门提供数字化营销服务，目前已交付<strong>汇直通</strong>（门店办单小程序）、<strong>能量加油站</strong>（消费者扫码营销小程序）、<strong>雀巢NHS后台</strong>（服务端管理后台）三大系统。渠道方面，除汇直通外还包括小河马、智导等第三方售卖公司。</p>
+      <p>三峡（<strong>雀巢健康科学会员中心</strong>）是另一套为雀巢服务的C端消费者营销小程序，负责会员码展示与扫码集罐兑换，三峡有独立的后台服务端。</p>
+      <p>本次"雀巢益生菌买赠活动"项目旨在对现有买赠活动机制进行升级，支持后台管理员创建和管理大单礼活动，门店店员通过汇直通小程序完成会员资格核验与产品扫码出库办单，消费者通过能量加油站小程序扫码参与兑奖。</p>
+
+      <h3>迭代目标与成功指标</h3>
+      <ul>
+        <li>后台管理员可自主创建、编辑、启用/禁停大单礼活动</li>
+        <li>门店店员可通过汇直通完成完整的"查活动→核会员→扫产品→办单"流程</li>
+        <li>消费者可通过能量加油站查看活动、扫码兑奖</li>
+        <li>后台管理员可查询办单记录、管理活动门店</li>
+      </ul>
+
+      <h3>范围边界</h3>
+      <table>
+        <thead><tr><th>包含（本版本）</th><th>不包含（本版本）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>后台：活动列表/详情/新增编辑/门店管理/办单记录</td>
+            <td>后台：数据分析Dashboard、权限角色细粒度管理</td>
+          </tr>
+          <tr>
+            <td>店员端：活动选择→规格选择→会员核验→扫码出库→办单成功→记录查询</td>
+            <td>店员端：退货/退款流程、多规格混合出库</td>
+          </tr>
+          <tr>
+            <td>消费者端：能量站首页→扫码→扫码结果页（积分+广告入口）</td>
+            <td>消费者端：完整兑换流程（兑奖确认→兑奖成功）<span class="tag tag-todo">⚠️ 待开发</span></td>
+          </tr>
+          <tr>
+            <td>三系统联动：汇直通↔NHS↔三峡后台 核验链路</td>
+            <td>智导/小河马等其他渠道接入</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 三、用户与场景 -->
+    <section id="s3">
+      <h2>三、用户与场景</h2>
+
+      <section id="s3-1">
+        <h3>3.1 目标用户画像</h3>
+        <table>
+          <thead><tr><th>角色</th><th>所属系统</th><th>职责概述</th><th>基础资料定义</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>后台管理员</strong></td>
+              <td>雀巢NHS后台</td>
+              <td>创建和管理大单礼活动、管理活动门店、查看办单记录</td>
+              <td>云机汇给雀巢做的服务端功能，汇直通和能量加油站的所有接口走 NHS</td>
+            </tr>
+            <tr>
+              <td><strong>门店店员</strong></td>
+              <td>汇直通小程序</td>
+              <td>查看可参与活动、核验消费者会员资格、扫码出库办单、查看办单记录</td>
+              <td>门店店员打开汇直通小程序，选择门店角色输入手机号获取验证码登录</td>
+            </tr>
+            <tr>
+              <td><strong>消费者</strong></td>
+              <td>能量加油站 + 雀巢健康科学会员中心</td>
+              <td>扫码参与活动、查看积分/活动、兑换奖品</td>
+              <td>消费者扫码营销小程序；会员码展示、扫码集罐兑换由三峡完成</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="s3-2">
+        <h3>3.2 核心使用场景</h3>
+
+        <h4>场景一：后台管理员创建大单礼活动</h4>
+        <p><strong>作为</strong>雀巢运营人员，<strong>我想要</strong>在NHS后台创建一个大单礼活动（设置名称、时间、图片、规则、关联产品），<strong>以便</strong>门店店员可以在汇直通中看到该活动并为消费者办单。</p>
+        <p><strong>验收条件：</strong></p>
+        <ul>
+          <li>可填写活动名称（≤50字，不含空格）、选择活动类型、设置起止时间</li>
+          <li>可上传活动封面图、列表图、消费者广告图（各有限制尺寸与格式）</li>
+          <li>可填写广告图跳转地址（小程序路径）</li>
+          <li>支持富文本编辑活动规则</li>
+          <li>保存后活动出现在活动列表中</li>
+        </ul>
+
+        <h4>场景二：门店店员为消费者办单</h4>
+        <p><strong>作为</strong>门店店员，<strong>我想要</strong>在汇直通中选择活动、核验消费者会员资格、扫描产品罐底码完成办单，<strong>以便</strong>消费者可以获得活动参与资格并后续兑奖。</p>
+        <p><strong>验收条件：</strong></p>
+        <ul>
+          <li>可查看本门店可参与的活动列表（区分进行中/已结束）</li>
+          <li>可选择产品和规格，查看对应礼品库存</li>
+          <li>可扫描消费者三峡会员码核验资格（有资格→确认办单 / 无资格→提示原因）</li>
+          <li>可扫描产品罐底溯源码出库（支持删除重扫、校验码是否已被使用）</li>
+          <li>办单成功后展示订单信息，支持继续办单或查看活动数据</li>
+        </ul>
+
+        <h4>场景三：消费者扫码查看活动</h4>
+        <p><strong>作为</strong>消费者，<strong>我想要</strong>在能量加油站扫描产品码查看积分和活动信息，<strong>以便</strong>了解可参与的大单礼活动。</p>
+        <p><strong>验收条件：</strong></p>
+        <ul>
+          <li>能量站首页展示扫码入口和健康营地等内容</li>
+          <li>扫码成功后展示获得积分和活动广告入口</li>
+          <li>点击广告可进入大单礼活动落地页 <span class="tag tag-todo">⚠️ 待开发</span></li>
+        </ul>
+      </section>
+    </section>
+
+    <!-- 四、功能需求详情 -->
+    <section id="s4">
+      <h2>四、功能需求详情</h2>
+
+      <!-- ===== 4.1 后台管理员——大单礼活动管理 ===== -->
+      <section id="s4-1">
+        <h3>4.1 后台管理员——大单礼活动管理</h3>
+
+        <h4>功能概述</h4>
+        <p>后台管理员通过雀巢NHS后台的「大单礼买赠管理」模块，对大单礼活动进行全生命周期管理：创建活动、查看详情、编辑信息、启用/禁停、管理活动门店、查看办单记录。</p>
+
+        <h4>交互原型对照</h4>
+        <div class="proto-iframe-wrapper open">
+          <div class="proto-iframe-toggle" onclick="this.parentElement.classList.toggle('open')">
+            <span class="toggle-icon">▶</span>
+            <span>大单礼活动管理后台原型.html → 活动列表 / 活动详情 / 新增编辑 / 活动门店 / 办单记录（点击收起）</span>
+          </div>
+          <iframe class="proto-iframe-body" src="../04-原型/大单礼活动管理后台原型.html" loading="lazy"></iframe>
+        </div>
+
+        <h4>用户操作流程</h4>
+        <div class="mermaid">
+sequenceDiagram
+    actor 管理员 as NHS后台管理员
+    participant NHS as 雀巢NHS后台
+
+    Note over 管理员,NHS: ===== 活动列表与筛选 =====
+    管理员->>NHS: 进入「大单礼买赠管理」→「大单礼活动列表」
+    NHS->>管理员: 展示活动列表（编号/名称/时间/封面/状态/创建人）
+    管理员->>NHS: 按活动名称/开始时间/状态 筛选
+    NHS->>管理员: 返回筛选结果
+    管理员->>NHS: 点击「新增」
+    NHS->>管理员: 进入新增活动页面
+
+    Note over 管理员,NHS: ===== 新增/编辑活动 =====
+    管理员->>NHS: 填写活动名称(≤50字)、选择活动类型
+    管理员->>NHS: 选择起止时间
+    管理员->>NHS: 上传活动封面图/列表图/消费者广告图
+    管理员->>NHS: 填写广告图跳转地址
+    管理员->>NHS: 使用富文本编辑器编写活动规则
+    管理员->>NHS: 点击「保存」
+    NHS->>管理员: 保存成功，返回活动列表
+
+    Note over 管理员,NHS: ===== 活动状态管理 =====
+    管理员->>NHS: 点击状态开关
+    alt 启用
+        NHS->>管理员: 活动状态变为「启用」(绿色)
+    else 禁用
+        NHS->>管理员: 活动状态变为「禁用」(红色)
+    end
+
+    Note over 管理员,NHS: ===== 活动门店管理 =====
+    管理员->>NHS: 在活动列表「更多」→「查看活动门店」
+    NHS->>管理员: 展示该活动的门店列表
+    管理员->>NHS: 按门店编号/名称/手机号筛选
+    管理员->>NHS: 点击「批量导入」
+    NHS->>管理员: 弹出导入弹窗→上传xls/xlsx→导入门店数据
+    管理员->>NHS: 点击「导出」
+    NHS->>管理员: 导出当前门店列表
+
+    Note over 管理员,NHS: ===== 办单记录查询 =====
+    管理员->>NHS: 进入「大单礼办单记录」
+    NHS->>管理员: 展示办单记录列表（19列：单号/活动/门店/会员/商品/扫码数量/时间…）
+    管理员->>NHS: 按多种条件筛选（活动编号/门店/会员手机号/商品/创建时间…）
+    NHS->>管理员: 返回筛选结果（支持分页）
+        </div>
+
+        <h4>子模块 4.1.1：活动列表</h4>
+        <p><strong>原型来源：</strong>大单礼活动管理后台原型.html → Page 1 活动列表 (page-list)</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>展示字段</td><td>复选框、编号、活动名称、开始时间、结束时间、活动封面图、状态、创建时间、创建人、操作</td><td>活动列表表格</td></tr>
+            <tr><td>搜索筛选</td><td>活动名称（精准）、开始时间（日期范围）、状态（下拉：请选择/启用/禁用）</td><td>筛选栏</td></tr>
+            <tr><td>排序规则</td><td>按创建时间降序</td><td>—</td></tr>
+            <tr><td>分页</td><td>支持 20/50/100 条/页，显示总数、页码导航、跳页输入</td><td>分页器</td></tr>
+            <tr><td>操作项</td><td>查看（跳转详情）、更多▾（修改活动信息/活动门店导入/查看活动门店）、状态开关（启用/禁用）</td><td>操作列</td></tr>
+            <tr><td>顶部功能</td><td>查询、重置、+ 新增</td><td>工具栏</td></tr>
+          </tbody>
+        </table>
+
+        <h5>业务规则</h5>
+        <table>
+          <thead><tr><th>规则编号</th><th>触发条件</th><th>执行逻辑</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>R-B01</td><td>点击状态开关</td><td>切换活动启用/禁用状态，视觉反馈（绿/红）</td><td>活动列表 · switch 组件</td></tr>
+            <tr><td>R-B02</td><td>点击「更多」展开下拉</td><td>显示：修改活动信息、活动门店导入、查看活动门店；点击后关闭下拉并跳转对应页面</td><td>action-dropdown 组件</td></tr>
+            <tr><td>R-B03</td><td>点击「新增」</td><td>跳转至新增活动页面（page-edit）</td><td>工具栏按钮</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.1.2：活动详情查看</h4>
+        <p><strong>原型来源：</strong>大单礼活动管理后台原型.html → Page 2 活动详情查看 (page-detail)</p>
+
+        <p>展示活动完整信息（活动编号、名称、类型、起止时间、状态、三张图片、广告图跳转地址、创建时间/创建者）及活动规则（富文本渲染）。顶部提供「返回上级」和「刷新」按钮。</p>
+
+        <h5>字段说明</h5>
+        <table>
+          <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>活动编号</td><td>数字</td><td>系统自动生成</td><td>活动信息卡片</td></tr>
+            <tr><td>活动名称</td><td>文本</td><td>≤50字，不含空格</td><td>活动信息卡片</td></tr>
+            <tr><td>活动类型</td><td>标签</td><td>新大单礼礼活动 / 老客户大单礼活动 / 扫码领福利活动</td><td>活动信息 · tag</td></tr>
+            <tr><td>起止时间</td><td>日期时间</td><td>精确到秒</td><td>活动信息卡片</td></tr>
+            <tr><td>状态</td><td>枚举</td><td>启用（绿色）/ 禁用（红色）</td><td>status-on 组件</td></tr>
+            <tr><td>活动图片</td><td>图片(750×304)</td><td>png/jpg/jpeg，≤2M</td><td>活动信息 · preview-img</td></tr>
+            <tr><td>列表图片</td><td>图片(64×283)</td><td>png/jpg/jpeg，≤2M</td><td>活动信息 · preview-img</td></tr>
+            <tr><td>消费者广告图</td><td>图片(720×310)</td><td>png/jpg/jpeg，≤2M</td><td>活动信息 · preview-img</td></tr>
+            <tr><td>广告图跳转地址</td><td>文本</td><td>小程序页面路径</td><td>活动信息卡片</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.1.3：新增/编辑活动</h4>
+        <p><strong>原型来源：</strong>大单礼活动管理后台原型.html → Page 3 新增/编辑活动 (page-edit)</p>
+
+        <table>
+          <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>默认值</th><th>校验规则</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>活动名称</td><td>文本</td><td>是</td><td>—</td><td>最大50字，不能含有空格</td><td>page-edit 表单</td></tr>
+            <tr><td>活动类型</td><td>下拉选择</td><td>是</td><td>请选择活动类型</td><td>必选其一</td><td>page-edit 下拉框</td></tr>
+            <tr><td>起止时间</td><td>日期范围</td><td>是</td><td>请选择日期范围</td><td>结束时间不得早于开始时间</td><td>page-edit 日期选择器</td></tr>
+            <tr><td>活动封面图</td><td>图片上传</td><td>是</td><td>—</td><td>png/jpg/jpeg，750×304px，≤2M</td><td>page-edit 上传组件</td></tr>
+            <tr><td>活动列表图</td><td>图片上传</td><td>是</td><td>—</td><td>png/jpg/jpeg，64×283px，≤2M</td><td>page-edit 上传组件</td></tr>
+            <tr><td>消费者广告图</td><td>图片上传</td><td>是</td><td>—</td><td>png/jpg/jpeg，720×310px，≤2M</td><td>page-edit 上传组件</td></tr>
+            <tr><td>广告图跳转地址</td><td>文本</td><td>否</td><td>—</td><td>仅支持小程序跳转地址</td><td>page-edit 输入框</td></tr>
+            <tr><td>活动规则</td><td>富文本</td><td>是</td><td>—</td><td>支持粗体/斜体/下划线/删除线/列表/图片等</td><td>page-edit 富文本编辑器</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>操作按钮：</strong>「返回上级」（取消，回到列表）、「保存」（确认保存，弹窗确认后返回列表）</p>
+        <p><strong>富文本编辑器功能：</strong>格式、撤销、重做、剪切、复制、粘贴、格式刷、粗体、斜体、下划线、删除线、字体颜色、背景色、清除格式、无序列表、有序列表、对齐、缩进、图片。底部显示元素路径和字数统计。</p>
+
+        <h4>子模块 4.1.4：活动门店管理</h4>
+        <p><strong>原型来源：</strong>大单礼活动管理后台原型.html → Page 4 活动门店 (page-stores)</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>展示字段</td><td>门店编号、大区编码、大区名称、雀巢门店编码、门店名称、门店手机号、门店省份、门店城市、操作</td><td>门店表格</td></tr>
+            <tr><td>搜索筛选</td><td>门店编号、雀巢门店编号、门店名称、门店手机号</td><td>筛选栏</td></tr>
+            <tr><td>操作项</td><td>查询/重置/导出/批量导入/返回上级、删除（行级，带二次确认）</td><td>工具栏 + 操作列</td></tr>
+          </tbody>
+        </table>
+
+        <h5>批量导入弹窗</h5>
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>标题</td><td>批量导入活动门店</td><td>导入弹窗 header</td></tr>
+            <tr><td>文件上传</td><td>点击「选择文件」区域选择 xls/xlsx 文件，展示文件名</td><td>上传区</td></tr>
+            <tr><td>上传提示</td><td>表格格式为导出的数据格式；每次上传不得超过 1000 条数据</td><td>提示列表</td></tr>
+            <tr><td>操作按钮</td><td>下载模板 / 导入文件 / 关闭弹窗</td><td>底部按钮</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.1.5：大单礼办单记录</h4>
+        <p><strong>原型来源：</strong>大单礼活动管理后台原型.html → Page 5 办单记录 (page-records)</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>展示字段</td><td>办单记录单号、活动编号、活动名称、活动价值、门店编号、雀巢门店编码、门店名称、门店省份、门店城市、门店手机号、会员手机号、会员unionid、雀巢商品编码、雀巢商品名称、扫码商品数量、扫商品单号、扫码数量、创建时间、操作</td><td>办单记录表格（19列）</td></tr>
+            <tr><td>搜索筛选</td><td>高级设备号、活动编号、雀巢门店编码、门店编号、门店名称、门店省份（下拉）、门店城市、会员手机号、商品条码、商品名称、门店连活编号、活动创建（下拉）、创建时间（日期范围）</td><td>筛选区（7列网格布局）</td></tr>
+            <tr><td>分页</td><td>支持 20/50/100 条/页，显示总数、页码导航、跳页输入</td><td>分页器</td></tr>
+            <tr><td>操作项</td><td>查询、重置、+ 添加、查看详情</td><td>工具栏 + 操作列</td></tr>
+            <tr><td>模拟数据</td><td>原型含 21 条模拟办单记录，覆盖汇直通/智导/智净渠道、多省市场景</td><td>recordsData 数组</td></tr>
+          </tbody>
+        </table>
+
+        <h5>异常流程与边界条件</h5>
+        <div class="callout warn">
+          <strong>🟡 待确认：</strong>原型仅含 21 条静态模拟数据，未覆盖空数据态（0条记录时的空状态展示）及网络异常态。时序图中未涉及后台办单记录查询的 alt/opt 分支，需与甲方确认异常场景的处理方式。
+        </div>
+
+        <!-- 输入溯源 -->
+        <h4>输入溯源</h4>
+        <table class="trace-table">
+          <thead><tr><th>溯源维度</th><th>来源文件</th><th>具体引用</th></tr></thead>
+          <tbody>
+            <tr><td>页面/组件</td><td>大单礼活动管理后台原型.html</td><td>page-list 活动列表、page-detail 详情、page-edit 新增编辑、page-stores 门店、page-records 办单记录</td></tr>
+            <tr><td>操作流程</td><td>业务时序图.md</td><td>未覆盖后台端时序（原型独立呈现）<span class="tag tag-confirm">🟡 待确认</span></td></tr>
+            <tr><td>业务术语</td><td>必看-基础资料.md</td><td>雀巢NHS后台、粤海仓、QR/SIM/SFE</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ===== 4.2 门店店员——活动选择与办单 ===== -->
+      <section id="s4-2">
+        <h3>4.2 门店店员——活动选择与办单</h3>
+
+        <h4>功能概述</h4>
+        <p>门店店员登录汇直通小程序后，查看本门店可参与的大单礼活动列表，选择活动进入详情页，选择购买产品和规格，核验消费者会员资格，扫描产品罐底溯源码完成出库办单。</p>
+
+        <h4>交互原型对照</h4>
+        <div class="proto-iframe-wrapper open">
+          <div class="proto-iframe-toggle" onclick="this.parentElement.classList.toggle('open')">
+            <span class="toggle-icon">▶</span>
+            <span>移动端交互原型.html → P01～P06（店员端活动选择与办单流程）（点击收起）</span>
+          </div>
+          <iframe class="proto-iframe-body" src="../04-原型/移动端交互原型.html" loading="lazy"></iframe>
+        </div>
+
+        <h4>用户操作流程（完整办单路径）</h4>
+        <div class="mermaid">
+sequenceDiagram
+    actor 店员 as 门店店员(汇直通)
+    participant 汇直通 as 汇直通小程序
+    participant NHS as 雀巢NHS后台
+    participant 三峡 as 三峡(会员中心)
+    participant 三峡后台 as 三峡后台
+
+    店员->>汇直通: 进入「可参与活动」列表
+    汇直通->>+NHS: 查询门店可参与活动
+    NHS-->>-汇直通: 返回活动列表（进行中/已结束）
+    汇直通->>店员: 展示活动卡片列表
+
+    店员->>汇直通: 点击活动卡片
+    汇直通->>汇直通: 进入活动详情页
+
+    汇直通->>+NHS: 查询可办单产品接口
+    NHS-->>-汇直通: 返回产品、规格、奖品信息
+    汇直通->>店员: 展示产品+规格选择+礼品库存
+
+    店员->>汇直通: 选择产品+规格
+    汇直通->>店员: 展示选中规格对应礼品（含库存）
+
+    店员->>汇直通: 点击「前往扫码核验资格」
+    汇直通->>店员: 打开扫码界面
+    Note over 店员,三峡: 消费者打开「雀巢健康科学会员中心」展示会员码
+    店员->>三峡: 扫描消费者会员码
+
+    店员->>汇直通: 提交扫描到的会员码
+    汇直通->>+NHS: 核验会员资格
+    NHS->>+三峡后台: 转发会员资格核验
+    三峡后台-->>-NHS: 返回会员信息+是否可参加
+    NHS-->>-汇直通: 返回核验结果
+
+    alt 无资格
+        汇直通->>店员: 弹窗提示：已达参与上限/未关注企微
+    else 有资格
+        汇直通->>店员: 展示「确认参加活动」按钮
+        店员->>汇直通: 点击确认
+        汇直通->>店员: 打开扫罐底码界面
+        店员->>汇直通: 扫描产品罐底溯源码
+        汇直通->>汇直通: 校验码是否已被使用
+
+        alt 码已被使用
+            汇直通->>店员: 弹窗提示：溯源码已被使用
+        else 码有效
+            汇直通->>+NHS: 查询当前规格库存
+            NHS-->>-汇直通: 返回库存状态
+
+            alt 无库存
+                汇直通->>店员: Toast：当前规格礼品库存已用尽
+            else 有库存
+                汇直通->>+NHS: 提交办单
+                NHS-->>-汇直通: 办单成功
+                汇直通->>店员: 展示办单成功页
+            end
+        end
+    end
+        </div>
+
+        <h4>子模块 4.2.1：可参与活动列表</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → P01 可参与活动列表（进行中）、P01b 已结束活动列表</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>Tab 切换</td><td>「进行中」/「已结束」两个 Tab 切换</td><td>P01 Tab 栏</td></tr>
+            <tr><td>活动卡片</td><td>展示活动名称、进行中/已结束标签、活动时间、活动缩略图</td><td>activity-card 组件</td></tr>
+            <tr><td>交互</td><td>点击进行中活动 → 进入活动详情（未选规格）；点击已结束活动 → Toast「该活动已结束」</td><td>P01→P02 跳转</td></tr>
+            <tr><td>空态</td><td>原型中 TODO 标记：列表为空时显示空态组件 <span class="tag tag-todo">⚠️ 待开发</span></td><td>P01 TODO 注释</td></tr>
+            <tr><td>暂无可参与活动</td><td>双击标题可触发「暂无参与活动的商品」弹窗</td><td>modal-no-activity</td></tr>
+          </tbody>
+        </table>
+
+        <h5>模拟数据覆盖</h5>
+        <table>
+          <thead><tr><th>活动名</th><th>状态</th><th>产品</th><th>规格</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>生命花园益生菌买赠活动</td><td>进行中</td><td>生命花园复合益生菌固体饮料200亿（30袋）</td><td>1盒</td><td>P01 活动卡片</td></tr>
+            <tr><td>蔼儿舒买赠活动</td><td>进行中</td><td>蔼儿舒</td><td>5罐 / 10罐</td><td>P01 活动卡片</td></tr>
+            <tr><td>买赠活动"佰分关爱"</td><td>进行中</td><td>小佰太能</td><td>6罐装</td><td>P01 活动卡片</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.2.2：活动详情与规格选择</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → P02 活动详情·未选规格、P02 活动详情·已选规格</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>导航栏</td><td>返回按钮（回到活动列表）、标题「活动详情」</td><td>P02 nav-bar</td></tr>
+            <tr><td>活动 Banner</td><td>展示活动宣传图及活动名称</td><td>P02 banner</td></tr>
+            <tr><td>礼品库存入口</td><td>右上角「🎁 礼品库存」胶囊按钮，点击弹出库存弹窗（展示各规格礼品+库存数）</td><td>stock-pill → modal-stock</td></tr>
+            <tr><td>产品选择</td><td>下拉列表选择产品（BottomSheet），选择后方可启用规格选择</td><td>form-row select</td></tr>
+            <tr><td>规格选择</td><td>下拉列表选择规格（初始禁用），选择后同步展示对应礼品图+库存</td><td>form-row select</td></tr>
+            <tr><td>礼品展示</td><td>已选规格后展示礼品图、名称、库存（红色提示：礼品限兑1个）</td><td>gift-set 组件</td></tr>
+            <tr><td>规则详情</td><td>展示活动时间、适用商品、活动规则、会员扫码规则、礼品领取说明</td><td>rules-section</td></tr>
+            <tr><td>操作按钮</td><td>「前往扫码核验资格」（橙色主按钮，库存为0时置灰禁用）、「查看活动数据」（跳转办单记录）</td><td>P02-filled 按钮</td></tr>
+          </tbody>
+        </table>
+
+        <h5>业务规则</h5>
+        <table>
+          <thead><tr><th>规则编号</th><th>触发条件</th><th>执行逻辑</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>R-S01</td><td>规格库存=0</td><td>「前往扫码核验资格」按钮置灰，文案变为「当前规格库存已用尽」</td><td>syncP02Filled()</td></tr>
+            <tr><td>R-S02</td><td>未选择产品即点规格</td><td>Toast「请先选择购买产品」，规格选择器保持禁用态</td><td>openOption('opt-spec')</td></tr>
+            <tr><td>R-S03</td><td>切换产品</td><td>清空已选规格，规格选择器重置为禁用态</td><td>openOption('opt-product')</td></tr>
+          </tbody>
+        </table>
+
+        <h5>礼品库存弹窗</h5>
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>展示内容</td><td>各规格礼品名称、可兑内容描述、当前库存数（含已用尽标记）</td><td>modal-stock</td></tr>
+            <tr><td>底部提示</td><td>红色提示「礼品限兑1个，实际可兑换礼品以最终兑换时展示为准」</td><td>sm-foot</td></tr>
+            <tr><td>关闭方式</td><td>底部「关闭」按钮 / 点击蒙层</td><td>stock-modal</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.2.3：会员资格核验</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → P03 扫会员码、P04 核验无资格、P05 核验有资格·确认</p>
+
+        <h5>状态描述</h5>
+        <table>
+          <thead><tr><th>状态</th><th>触发条件</th><th>UI表现差异</th><th>交互行为差异</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>扫码等待</td><td>进入核验页面</td><td>扫码框（四角+扫描线动画）+提示文字「将会员码对准扫描框」</td><td>下方「模拟扫描」按钮（开发调试用）</td><td>P03</td></tr>
+            <tr><td>有资格</td><td>会员核验通过</td><td>显示「恭喜，会员符合活动资格！」+会员手机号</td><td>展示活动信息确认卡片+「确认并立即参与活动」按钮</td><td>P05</td></tr>
+            <tr><td>无资格</td><td>会员核验不通过</td><td>显示「抱歉，会员不符合活动资格！」+原因说明</td><td>红色警示图标+原因文字（如「会员未关注企业微信」）+返回按钮</td><td>P04</td></tr>
+          </tbody>
+        </table>
+
+        <h5>业务规则</h5>
+        <table>
+          <thead><tr><th>规则编号</th><th>触发条件</th><th>执行逻辑</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>R-S04</td><td>核验通过</td><td>展示确认页面，含活动名称、产品、规格、礼品信息+库存；底部警告「请消费者确认参与活动」</td><td>P05</td></tr>
+            <tr><td>R-S05</td><td>核验不通过</td><td>弹窗展示拒绝原因（已达参与上限 / 未关注企微），可返回活动详情</td><td>P04+时序图 alt 分支</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>🔴 冲突：</strong>时序图定义核验不通过弹窗含两种原因（"已达参与上限"和"未关注企微"），但原型 P04 仅展示了"未关注企业微信"一种原因态。建议补充"已达参与上限"状态页面。
+        </div>
+
+        <h4>子模块 4.2.4：扫码出库</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → P05a 扫码出库（空态）、P05b 扫码出库（已删除罐码）、P05c 罐底码已被使用</p>
+
+        <h5>状态描述</h5>
+        <table>
+          <thead><tr><th>状态</th><th>触发条件</th><th>UI表现差异</th><th>交互行为差异</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>空态</td><td>刚进入页面，未扫描任何码</td><td>雀巢占位图+「请扫码参与活动」</td><td>点击「请扫码」按钮进行扫描</td><td>P05a-empty</td></tr>
+            <tr><td>已扫码</td><td>扫描成功</td><td>已扫产品列表（产品图+名称+溯源码），支持删除（×）</td><td>确认按钮从禁用变启用，文案更新为「确认（1/1）」</td><td>P05a-list-wrap / P05b</td></tr>
+            <tr><td>码已被使用</td><td>扫描到已被使用的罐底码</td><td>弹窗提示「溯源码:xxx已被使用！」</td><td>点击「确认」关闭弹窗，可继续扫码</td><td>P05c+modal-can-used</td></tr>
+            <tr><td>删除确认</td><td>点击已扫产品的×</td><td>弹窗「确定要删除吗？」</td><td>取消→关闭弹窗；确定→清空已扫列表，回到空态</td><td>P05b+modal-delete-confirm</td></tr>
+          </tbody>
+        </table>
+
+        <h5>业务规则</h5>
+        <table>
+          <thead><tr><th>规则编号</th><th>触发条件</th><th>执行逻辑</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>R-S06</td><td>扫描数量达到要求（益生菌活动=1盒）</td><td>显示提示「已达到参与条件」，确认按钮启用</td><td>P05a-tip / updateP05aUI()</td></tr>
+            <tr><td>R-S07</td><td>点击「确认」提交办单</td><td>先校验库存→无库存弹窗「当前规格礼品库存数已用尽」→有库存提交办单</td><td>submitOrder()</td></tr>
+            <tr><td>R-S08</td><td>提交办单</td><td>自动提交办单（会员信息+产品外码），成功后跳转办单成功页</td><td>submitOrder() → goPage('p06')</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout warn">
+          <strong>🟡 待确认：</strong>原型中罐底码已被使用的概率为模拟演示用（50%），实际应由NHS后台校验返回。时序图中未显式定义「罐底码已被使用」的 alt 分支，需确认该异常流程的业务处理规则（是否应禁止重复办单、错误提示文案是否准确）。
+        </div>
+
+        <h4>子模块 4.2.5：办单成功</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → P06 办单成功</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>成功 Hero</td><td>绿色对勾+「恭喜办单成功！」</td><td>success-hero</td></tr>
+            <tr><td>订单信息</td><td>会员手机号、产品信息（名称×数量）、活动单号、办单时间</td><td>订单信息卡片</td></tr>
+            <tr><td>操作按钮</td><td>「继续办单」（回到扫码出库页）、「查看活动数据」（跳转办单记录）</td><td>actions-bar</td></tr>
+          </tbody>
+        </table>
+
+        <!-- 输入溯源 -->
+        <h4>输入溯源</h4>
+        <table class="trace-table">
+          <thead><tr><th>溯源维度</th><th>来源文件</th><th>具体引用</th></tr></thead>
+          <tbody>
+            <tr><td>页面/组件</td><td>移动端交互原型.html</td><td>P01～P06 全部页面、modal-stock/module-stock-empty/modal-can-used/modal-delete-confirm</td></tr>
+            <tr><td>操作流程</td><td>业务时序图.md</td><td>「店员端：活动选择与办单」完整片段（第22-69行）</td></tr>
+            <tr><td>业务术语</td><td>必看-基础资料.md</td><td>汇直通、门店办单流程、罐底码（溯源码）、罐内码（营销码）、三峡</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ===== 4.3 门店店员——办单记录查询 ===== -->
+      <section id="s4-3">
+        <h3>4.3 门店店员——办单记录查询</h3>
+
+        <h4>功能概述</h4>
+        <p>门店店员可查看该门店下的办单记录（活动数据），支持按会员手机号搜索或扫码搜索，点击记录查看订单详情（含罐码扫码状态和物流信息）。</p>
+
+        <h4>交互原型对照</h4>
+        <div class="proto-iframe-wrapper open">
+          <div class="proto-iframe-toggle" onclick="this.parentElement.classList.toggle('open')">
+            <span class="toggle-icon">▶</span>
+            <span>移动端交互原型.html → P07 活动数据 / P08 订单详情（点击收起）</span>
+          </div>
+          <iframe class="proto-iframe-body" src="../04-原型/移动端交互原型.html" loading="lazy"></iframe>
+        </div>
+
+        <h4>用户操作流程</h4>
+        <div class="mermaid">
+sequenceDiagram
+    actor 店员 as 门店店员
+    participant 汇直通 as 汇直通小程序
+    participant NHS as 雀巢NHS后台
+
+    店员->>汇直通: 进入「活动数据」页
+    汇直通->>+NHS: 查询办单记录
+    NHS-->>-汇直通: 返回订单列表
+    汇直通->>店员: 展示办单记录卡片
+
+    店员->>汇直通: 输入会员手机号 / 点击扫码搜索
+    汇直通->>店员: 筛选展示匹配记录
+
+    店员->>汇直通: 点击某条记录「查看详情」
+    汇直通->>+NHS: 查询订单详情
+    NHS-->>-汇直通: 返回详情+罐码状态+物流
+    汇直通->>店员: 展示订单详情
+
+    alt 罐码未扫码
+        汇直通->>店员: 罐码状态标「未扫码」+ 赠品发货方式=无
+    else 罐码已扫码
+        汇直通->>店员: 罐码状态标「已扫码」+ 赠品发货方式=门店发货
+    end
+        </div>
+
+        <h5>列表页要素</h5>
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>搜索栏</td><td>输入框（请输入会员手机号或扫会员码查询）+ 扫码图标按钮</td><td>P07 search-bar</td></tr>
+            <tr><td>记录卡片</td><td>会员手机号、产品信息（含扫码进度标签 0/1 或 1/1）、活动单号、办单时间</td><td>P07 data-card</td></tr>
+            <tr><td>操作</td><td>「查看详情」跳转订单详情页</td><td>view-detail 按钮</td></tr>
+            <tr><td>空态</td><td>原型中 TODO 标记：列表为空态 <span class="tag tag-todo">⚠️ 待开发</span></td><td>P07 TODO 注释</td></tr>
+            <tr><td>模拟数据</td><td>3条办单记录：2条已扫码+门店发货、1条未扫码+无物流</td><td>RECORDS 数组</td></tr>
+          </tbody>
+        </table>
+
+        <h5>订单详情页</h5>
+        <table>
+          <thead><tr><th>状态</th><th>触发条件</th><th>UI表现差异</th><th>交互行为差异</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>未发货</td><td>罐码未扫码</td><td>白色导航栏；罐码状态标「未扫码」(橙色)；赠品发货方式=无</td><td>仅展示信息，无操作按钮</td><td>P08</td></tr>
+            <tr><td>已发货</td><td>罐码已扫码</td><td>蓝色渐变导航栏；罐码状态标「已扫码」(绿色)；赠品发货方式=门店发货</td><td>仅展示信息</td><td>P08b</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>🟡 待确认：</strong>时序图中店员端物流查询返回「发货方式=门店发货（无物流单号）」，原型P08确实展示了「赠品发货方式=无/门店发货」。但P08b已发货态的导航栏变为蓝色渐变，是否需要补充物流单号字段、发货时间等，需与甲方确认。
+        </div>
+
+        <h5>业务规则</h5>
+        <table>
+          <thead><tr><th>规则编号</th><th>触发条件</th><th>执行逻辑</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>R-S09</td><td>消费者扫码核销罐内码</td><td>罐码状态从「未扫码」变为「已扫码」，赠品发货方式更新为「门店发货」</td><td>时序图第79-82行</td></tr>
+            <tr><td>R-S10</td><td>搜索会员手机号</td><td>输入框搜索，前端或接口匹配办单记录中会员手机号</td><td>P07 search-bar</td></tr>
+          </tbody>
+        </table>
+
+        <!-- 输入溯源 -->
+        <h4>输入溯源</h4>
+        <table class="trace-table">
+          <thead><tr><th>溯源维度</th><th>来源文件</th><th>具体引用</th></tr></thead>
+          <tbody>
+            <tr><td>页面/组件</td><td>移动端交互原型.html</td><td>P07 活动数据/办单记录、P08 订单详情（未发货）、P08b 订单详情（已发货）</td></tr>
+            <tr><td>操作流程</td><td>业务时序图.md</td><td>「办单记录查询」片段（第71-82行）</td></tr>
+            <tr><td>业务术语</td><td>必看-基础资料.md</td><td>汇直通、罐底码（溯源码）、罐内码（营销码）、门店发货</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ===== 4.4 消费者——扫码兑奖（能量加油站） ===== -->
+      <section id="s4-4">
+        <h3>4.4 消费者——扫码兑奖（能量加油站）</h3>
+
+        <h4>功能概述</h4>
+        <p>消费者在能量加油站小程序扫码参与活动。首页展示活动入口和健康内容，扫码后展示积分结果和活动广告入口。完整兑奖流程（C03～C05）在原型中标注为「待后续补充」。</p>
+
+        <h4>交互原型对照</h4>
+        <div class="proto-iframe-wrapper open">
+          <div class="proto-iframe-toggle" onclick="this.parentElement.classList.toggle('open')">
+            <span class="toggle-icon">▶</span>
+            <span>移动端交互原型.html → C01 / C01b / C02（消费者端）（点击收起）</span>
+          </div>
+          <iframe class="proto-iframe-body" src="../04-原型/移动端交互原型.html" loading="lazy"></iframe>
+        </div>
+
+        <h4>用户操作流程</h4>
+        <div class="mermaid">
+sequenceDiagram
+    actor 消费者 as 消费者
+    participant 能量站 as 能量加油站
+    participant NHS as 雀巢NHS后台
+
+    Note over 消费者,能量站: ===== 能量站首页 =====
+    消费者->>能量站: 打开能量加油站
+    能量站->>消费者: 展示首页（健康营地/营养咨询/溯源信息/积分列表）
+    消费者->>能量站: 切换至「扫一扫」Tab
+    能量站->>消费者: 展示扫码入口+累计积分+积分商城
+
+    Note over 消费者,能量站: ===== 扫码 =====
+    消费者->>能量站: 点击「扫一扫」扫描产品码
+    能量站->>+NHS: 提交扫码记录
+    NHS-->>-能量站: 返回扫码结果+积分
+    能量站->>消费者: 展示扫码结果页
+
+    alt 扫码未达门槛
+        能量站->>消费者: 弹窗展示积分+活动广告图
+        消费者->>能量站: 点击广告图
+        能量站->>能量站: 跳转大单礼落地页（仅展示规则/奖品预览）<span class="tag tag-todo">⚠️ 待开发</span>
+    else 扫码已达门槛
+        能量站->>消费者: 首页Banner展示「大单礼待兑换」入口
+        消费者->>能量站: 点击Banner
+        能量站->>能量站: 进入大单礼落地页
+        能量站->>+NHS: 查询可兑换奖品
+        NHS-->>-能量站: 返回奖品列表
+        能量站->>消费者: 展示奖品+兑换按钮
+        消费者->>能量站: 点击「立即兑换」
+        能量站->>能量站: 二次确认弹窗
+        消费者->>能量站: 确认兑换
+        能量站->>+NHS: 提交兑换请求
+        NHS-->>-能量站: 兑换成功
+        能量站->>消费者: 展示兑换成功页（门店线下发放）<span class="tag tag-todo">⚠️ 待开发</span>
+    end
+        </div>
+
+        <h4>子模块 4.4.1：能量站首页</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → C01 能量站首页（健康营地）、C01b 能量站首页（扫一扫）</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>Hero 区域</td><td>蓝色渐变背景+「开盖扫码领积分」标题+产品罐展示</td><td>C01 energy-hero</td></tr>
+            <tr><td>扫码活动入口</td><td>「扫码领积分活动上线了」白底胶囊（点击切换至扫一扫视图）</td><td>C01 scan-activity-entry</td></tr>
+            <tr><td>健康营地</td><td>大卡片（占2行）+营养咨询+溯源信息（1+2 布局）</td><td>C01 entry-grid</td></tr>
+            <tr><td>积分列表</td><td>「扫码积分列表」入口卡片</td><td>C01 points-list-card</td></tr>
+            <tr><td>扫一扫视图</td><td>累计积分显示（默认54790）+「扫一扫」大按钮+积分商城卡片+规则详情</td><td>C01b points-bar+big-scan-btn+mall-card</td></tr>
+            <tr><td>底部 TabBar</td><td>首页 / 居中扫一扫（圆形突出按钮） / 个人中心</td><td>C01 consumer-tab-bar</td></tr>
+          </tbody>
+        </table>
+
+        <h4>子模块 4.4.2：扫码结果页</h4>
+        <p><strong>原型来源：</strong>移动端交互原型.html → C02 扫码结果页</p>
+
+        <table>
+          <thead><tr><th>要素</th><th>说明</th><th>原型来源</th></tr></thead>
+          <tbody>
+            <tr><td>蒙层</td><td>深色半透明蒙层+文档插画+「扫码成功！」文字</td><td>C02 c02-mask</td></tr>
+            <tr><td>积分卡片</td><td>白底金色描边卡片；顶部金色ribbon「恭喜您获得」；400积分大字</td><td>C02 c02-card</td></tr>
+            <tr><td>广告图</td><td>蓝色渐变场景+3个奶粉罐+「雀巢健康科学·买赠活动」文字，可点击</td><td>C02 c02-ad</td></tr>
+            <tr><td>操作</td><td>「✕」关闭按钮、「返回 ›」按钮（均回到扫一扫首页）</td><td>C02 c02-actions</td></tr>
+          </tbody>
+        </table>
+
+        <h5>异常流程与边界条件</h5>
+        <div class="callout danger">
+          <strong>⚠️ 待开发：消费者端完整兑奖流程（大单礼落地页 C03 → 兑换确认 C04 → 兑换成功 C05）</strong><br>
+          时序图定义了完整的 post-扫码流程（C03-C05），但移动端原型仅实现了到 C02 扫码结果页为止。<br>
+          原型代码注释（第2017行）：<code>兑换流程移至店员端/三峡</code>；<code>TODO: 消费者端兑换流程根据后续需求补充</code>
+        </div>
+
+        <div class="callout warn">
+          <strong>🔴 冲突：</strong>时序图中消费者端兑奖由能量加油站完成（能量站→NHS→三峡后台同步），但原型注释指出"兑换流程移至店员端/三峡"。两套设计对兑奖责任方的定义存在冲突，需与甲方明确：消费者兑奖在哪个系统触发、哪个系统执行。
+        </div>
+
+        <!-- 输入溯源 -->
+        <h4>输入溯源</h4>
+        <table class="trace-table">
+          <thead><tr><th>溯源维度</th><th>来源文件</th><th>具体引用</th></tr></thead>
+          <tbody>
+            <tr><td>页面/组件</td><td>移动端交互原型.html</td><td>C01 首页、C01b 扫一扫、C02 扫码结果页</td></tr>
+            <tr><td>操作流程</td><td>业务时序图.md</td><td>「消费者端：扫码兑奖」片段（第84-113行）</td></tr>
+            <tr><td>业务术语</td><td>必看-基础资料.md</td><td>能量加油站、雀巢健康科学会员中心（三峡）、罐底码/罐内码</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- 五、非功能需求 -->
+    <section id="s5">
+      <h2>五、非功能需求</h2>
+      <table>
+        <thead><tr><th>类别</th><th>需求描述</th><th>来源</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>性能</td>
+            <td>活动列表加载 &lt; 2s；办单提交响应 &lt; 3s（含库存校验+三峡核验）</td>
+            <td>基础资料（推断）</td>
+          </tr>
+          <tr>
+            <td>安全</td>
+            <td>会员手机号前台脱敏展示（原型中已实现：152****1768）；门店角色鉴权（登录态）；罐底码防重复使用校验</td>
+            <td>基础资料 + 原型模拟数据</td>
+          </tr>
+          <tr>
+            <td>兼容性</td>
+            <td>移动端原型支持 390/375/320 三种宽度适配；后台原型桌面端 1440px+ 基准</td>
+            <td>移动端原型.html size-toggle + 后台原型.html 布局</td>
+          </tr>
+          <tr>
+            <td>数据一致性</td>
+            <td>办单数据需同步至三峡后台（会员中心）；库存数据需在多系统间保持实时一致</td>
+            <td>时序图第109-110行</td>
+          </tr>
+          <tr>
+            <td>其他</td>
+            <td>后台管理需支持富文本活动规则编辑；导入门店支持 xls/xlsx ≤1000条</td>
+            <td>后台原型.html rich-text + import-modal</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 六、附录 -->
+    <section id="s6">
+      <h2>六、附录</h2>
+
+      <h3>6.1 术语表</h3>
+      <table>
+        <thead><tr><th>术语</th><th>定义</th><th>来源</th></tr></thead>
+        <tbody>
+          <tr><td>云机汇</td><td>我方公司名称，为雀巢提供数字化营销服务</td><td>基础资料</td></tr>
+          <tr><td>汇直通</td><td>云机汇给雀巢做的门店办单小程序（店员使用）</td><td>基础资料</td></tr>
+          <tr><td>能量加油站</td><td>云机汇给雀巢做的消费者扫码营销小程序</td><td>基础资料</td></tr>
+          <tr><td>雀巢NHS后台</td><td>云机汇给雀巢做的服务端功能；汇直通和能量加油站的所有接口走 NHS</td><td>基础资料</td></tr>
+          <tr><td>三峡（雀巢健康科学会员中心）</td><td>给雀巢做的C端消费者会员小程序，会员码展示、扫码集罐兑换由三峡完成；三峡有独立的后台服务端</td><td>基础资料</td></tr>
+          <tr><td>渠道</td><td>小河马、智导等与汇直通平级的第三方售卖公司</td><td>基础资料</td></tr>
+          <tr><td>SKU</td><td>产品库存单位</td><td>基础资料</td></tr>
+          <tr><td>罐底码（溯源码）</td><td>产品罐底部的溯源码，用于出库扫描和防伪校验</td><td>基础资料</td></tr>
+          <tr><td>罐内码（营销码）</td><td>产品罐内的营销码，消费者扫码参与活动使用</td><td>基础资料</td></tr>
+          <tr><td>粤海仓</td><td>雀巢仓库</td><td>基础资料</td></tr>
+          <tr><td>QR / SIM / SFE</td><td>雀巢IT系统</td><td>基础资料</td></tr>
+          <tr><td>办单</td><td>门店店员扫描产品罐底码，为消费者完成活动参与办理的流程</td><td>基础资料</td></tr>
+          <tr><td>大单礼</td><td>针对大宗购买（多罐装）的买赠活动类型</td><td>基础资料 + 原型</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.2 参考文档链接</h3>
+      <ul>
+        <li>必看-基础资料.md（业务背景、角色定义、术语表）</li>
+        <li>业务时序图.md（Mermaid时序图+页面流转总览）</li>
+        <li>大单礼活动管理后台原型.html（后台管理端交互原型）</li>
+        <li>移动端交互原型.html（汇直通+能量加油站移动端交互原型）</li>
+      </ul>
+
+      <h3>6.3 需求追溯矩阵</h3>
+      <table class="trace-table">
+        <thead><tr><th>功能需求编号</th><th>功能名称</th><th>原型页面/组件</th><th>时序图步骤</th><th>基础资料术语</th></tr></thead>
+        <tbody>
+          <tr><td>FR-01</td><td>活动列表（后台）</td><td>后台原型 → page-list 活动列表</td><td>—</td><td>雀巢NHS后台</td></tr>
+          <tr><td>FR-02</td><td>新增/编辑活动</td><td>后台原型 → page-edit</td><td>—</td><td>雀巢NHS后台</td></tr>
+          <tr><td>FR-03</td><td>活动详情查看</td><td>后台原型 → page-detail</td><td>—</td><td>雀巢NHS后台</td></tr>
+          <tr><td>FR-04</td><td>活动门店管理</td><td>后台原型 → page-stores + import-modal</td><td>—</td><td>雀巢NHS后台</td></tr>
+          <tr><td>FR-05</td><td>办单记录（后台）</td><td>后台原型 → page-records</td><td>—</td><td>雀巢NHS后台</td></tr>
+          <tr><td>FR-06</td><td>可参与活动列表（店员）</td><td>移动端原型 → P01 / P01b</td><td>第25-28行 活动列表查询</td><td>汇直通、门店办单流程</td></tr>
+          <tr><td>FR-07</td><td>活动详情+规格选择</td><td>移动端原型 → P02-empty / P02-filled</td><td>第30-35行 产品查询+展示</td><td>汇直通</td></tr>
+          <tr><td>FR-08</td><td>会员资格核验</td><td>移动端原型 → P03/P04/P05</td><td>第37-51行 扫会员码→核验→结果分支</td><td>三峡、汇直通</td></tr>
+          <tr><td>FR-09</td><td>扫码出库</td><td>移动端原型 → P05a/P05b/P05c</td><td>第55-67行 扫外码→库存校验→办单</td><td>罐底码（溯源码）</td></tr>
+          <tr><td>FR-10</td><td>办单成功</td><td>移动端原型 → P06</td><td>第66-67行 办单成功</td><td>汇直通</td></tr>
+          <tr><td>FR-11</td><td>办单记录查询（店员）</td><td>移动端原型 → P07/P08/P08b</td><td>第74-82行 办单记录+物流查询</td><td>汇直通</td></tr>
+          <tr><td>FR-12</td><td>能量站首页</td><td>移动端原型 → C01/C01b</td><td>—</td><td>能量加油站</td></tr>
+          <tr><td>FR-13</td><td>扫码结果页</td><td>移动端原型 → C02</td><td>第87-93行 扫码结果+弹窗广告</td><td>能量加油站</td></tr>
+          <tr><td>FR-14</td><td>大单礼兑奖（消费者）</td><td><span class="tag tag-todo">待开发</span></td><td>第95-112行 落地页→兑换→成功</td><td>能量加油站、三峡</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.4 差异汇总</h3>
+      <table>
+        <thead><tr><th>类型</th><th>涉及模块</th><th>差异描述</th><th>建议</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-confirm">🟡 存疑</span></td>
+            <td>4.1 后台管理</td>
+            <td>时序图未覆盖后台管理端操作流程，原型独立呈现</td>
+            <td>建议补充后台端的业务时序图</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-conflict">🔴 冲突</span></td>
+            <td>4.2 会员核验</td>
+            <td>时序图定义核验不通过含两种原因，原型P04仅展示一种</td>
+            <td>补充「已达参与上限」状态页面</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-confirm">🟡 存疑</span></td>
+            <td>4.2 扫码出库</td>
+            <td>罐底码已被使用的异常分支时序图未显式定义</td>
+            <td>确认该异常的业务处理规则</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-conflict">🔴 冲突</span></td>
+            <td>4.4 消费者兑奖</td>
+            <td>时序图兑奖由能量站完成；原型注释"移至店员端/三峡"</td>
+            <td>明确兑奖责任方和技术方案</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-todo">⚠️ 待开发</span></td>
+            <td>4.2 活动列表</td>
+            <td>P01 / P07 列表空态组件标记TODO</td>
+            <td>补充空态设计方案</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-todo">⚠️ 待开发</span></td>
+            <td>4.4 消费者兑奖</td>
+            <td>C03-C05 完整兑奖流程未实现</td>
+            <td>根据确认后的兑奖方案补充原型和开发</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>6.5 完整时序图引用</h3>
+      <p>详见 <code>业务时序图.md</code> 全文。核心时序图（店员端+消费者端）已在各功能模块中分段内联渲染。</p>
+
+      <p style="text-align:center; color:var(--c-text-mute); margin-top:40px; font-size:13px;">— 文档结束 · AI 初稿 V1.0 · 2026-06-17 —</p>
+    </section>
+
+  </main>
+
+  <script>
+    // ===== Mermaid 初始化 =====
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+    // ===== 左侧导航联动 =====
+    const sidebar = document.getElementById('sidebar');
+    const tocLinks = document.querySelectorAll('#toc a');
+
+    // 点击跳转 + 高亮
+    tocLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const href = this.getAttribute('href');
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // 移动端关闭侧边栏
+          sidebar.classList.remove('open');
+        }
+        // 高亮
+        tocLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 滚动自动高亮
+    const sections = [];
+    tocLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const el = document.querySelector(href);
+      if (el) sections.push({ el, link });
+    });
+
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        requestAnimationFrame(() => {
+          let current = null;
+          const scrollY = window.scrollY + 100;
+          sections.forEach(s => {
+            if (s.el.offsetTop <= scrollY) current = s;
+          });
+          if (current) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            current.link.classList.add('active');
+            // 同步展开父级
+            const parentLi = current.link.closest('li')?.parentElement?.closest('li');
+            if (parentLi) {
+              const parentA = parentLi.querySelector(':scope > a');
+              if (parentA) parentA.classList.add('active');
+            }
+          }
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    });
+
+    // ===== 初始高亮 =====
+    if (tocLinks.length > 0) tocLinks[0].classList.add('active');
+
+    // ===== 侧边栏折叠/展开 =====
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const svgCollapsed = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2 L12 8 L5 14"/></svg>';
+    const svgExpanded = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2 L4 8 L11 14"/></svg>';
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-collapsed');
+        toggleBtn.innerHTML = document.body.classList.contains('sidebar-collapsed') ? svgCollapsed : svgExpanded;
+      });
+    }
+  </script>
+</body>
+</html>
