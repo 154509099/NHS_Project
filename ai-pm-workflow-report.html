@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI赋能产品经理工作流 · 效率对比验证报告</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.7; }
+
+/* ===== Cover Hero ===== */
+.hero { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #fff; padding: 80px 40px 60px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(120,119,198,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(0,212,255,0.08) 0%, transparent 50%); }
+.hero h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 16px; position: relative; }
+.hero .subtitle { font-size: 1.1rem; opacity: 0.8; font-weight: 300; position: relative; }
+.hero .meta { margin-top: 32px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; position: relative; }
+.hero .meta-item { text-align: center; }
+.hero .meta-item .label { font-size: 0.75rem; opacity: 0.55; text-transform: uppercase; letter-spacing: 2px; }
+.hero .meta-item .value { font-size: 1rem; font-weight: 500; margin-top: 4px; }
+
+/* ===== Container ===== */
+.container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+
+/* ===== Section ===== */
+.section { margin: 48px auto; max-width: 1400px; padding: 0 40px; }
+.section-title { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.section-title .num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 1rem; font-weight: 700; flex-shrink: 0; }
+.section-desc { color: #6b7280; font-size: 0.95rem; margin-bottom: 28px; }
+
+/* ===== KPI Cards ===== */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 36px; }
+.kpi-card { background: #fff; border-radius: 14px; padding: 28px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; position: relative; overflow: hidden; transition: transform 0.2s; }
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-card .kpi-icon { font-size: 2rem; margin-bottom: 10px; }
+.kpi-card .kpi-value { font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.kpi-card .kpi-label { font-size: 0.85rem; color: #6b7280; margin-top: 6px; }
+.kpi-card.accent-green .kpi-value { background: linear-gradient(135deg, #11998e, #38ef7d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.kpi-card.accent-orange .kpi-value { background: linear-gradient(135deg, #f093fb, #f5576c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.kpi-card.accent-blue .kpi-value { background: linear-gradient(135deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* ===== Summary Box ===== */
+.summary-box { background: #fff; border-radius: 14px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 5px solid #667eea; }
+.summary-box h3 { font-size: 1.15rem; margin-bottom: 14px; color: #1a1a2e; }
+.summary-box p { color: #4b5563; font-size: 0.95rem; line-height: 1.8; margin-bottom: 10px; }
+.summary-box .highlight { background: linear-gradient(135deg, #667eea15, #764ba215); padding: 2px 8px; border-radius: 4px; font-weight: 600; color: #5a4fcf; }
+
+/* ===== Comparison Table ===== */
+.comp-table-wrap { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.comp-table thead th { background: #1a1a2e; color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.5px; }
+.comp-table thead th:first-child { border-radius: 0; }
+.comp-table tbody td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.comp-table tbody tr:nth-child(even) td { background: #fafbff; }
+.comp-table tbody tr:hover td { background: #f0f2ff; }
+.comp-table .label-trad { color: #9ca3af; font-weight: 500; }
+.comp-table .label-ai { color: #667eea; font-weight: 600; }
+.comp-table .saving { display: inline-block; background: #d1fae5; color: #065f46; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+
+/* ===== Step Cards ===== */
+.step-card { background: #fff; border-radius: 14px; padding: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 28px; overflow: hidden; }
+.step-card-header { padding: 22px 28px; cursor: pointer; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid transparent; transition: background 0.2s; }
+.step-card-header:hover { background: #fafbff; }
+.step-card-header .step-badge { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #fff; flex-shrink: 0; }
+.step-card-header .step-info { flex: 1; }
+.step-card-header .step-title { font-size: 1.05rem; font-weight: 700; color: #1a1a2e; }
+.step-card-header .step-sub { font-size: 0.8rem; color: #9ca3af; margin-top: 2px; }
+.step-card-header .step-arrow { font-size: 0.8rem; color: #9ca3af; transition: transform 0.3s; }
+.step-card.open .step-card-header { border-bottom-color: #e5e7eb; }
+.step-card.open .step-arrow { transform: rotate(180deg); }
+.step-card-body { display: none; padding: 24px 28px; }
+.step-card.open .step-card-body { display: block; }
+
+.step-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.step-compare-item { border-radius: 10px; padding: 20px; }
+.step-compare-item.trad { background: #fef2f2; border: 1px solid #fecaca; }
+.step-compare-item.ai { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.step-compare-item h5 { font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.step-compare-item.trad h5 { color: #dc2626; }
+.step-compare-item.ai h5 { color: #059669; }
+.step-compare-item p, .step-compare-item li { font-size: 0.85rem; color: #4b5563; line-height: 1.7; }
+.step-compare-item ul { padding-left: 18px; }
+.step-output { background: #f8fafc; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+.step-output h6 { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.step-output .output-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.step-output .output-tag { background: #fff; border: 1px solid #e5e7eb; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: #4b5563; }
+
+/* ===== Flow Diagram ===== */
+.flow-container { background: #fff; border-radius: 14px; padding: 36px 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow-x: auto; }
+.flow-row { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; min-width: 900px; }
+.flow-step { text-align: center; background: linear-gradient(135deg, #f8fafc, #f0f2ff); border: 2px solid #e5e7eb; border-radius: 14px; padding: 18px 20px; width: 170px; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s; }
+.flow-step:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102,126,234,0.15); border-color: #667eea; }
+.flow-step .fs-num { font-size: 0.7rem; font-weight: 700; color: #667eea; text-transform: uppercase; letter-spacing: 1px; }
+.flow-step .fs-title { font-size: 0.9rem; font-weight: 700; margin: 6px 0 4px; color: #1a1a2e; }
+.flow-step .fs-in { font-size: 0.7rem; color: #9ca3af; }
+.flow-step .fs-out { font-size: 0.7rem; color: #059669; margin-top: 2px; }
+.flow-arrow { font-size: 1.5rem; color: #667eea; padding: 0 4px; flex-shrink: 0; font-weight: 300; }
+
+/* ===== Prompt Block ===== */
+.prompt-block { background: #1e1e2e; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.prompt-block .prompt-header { padding: 12px 20px; background: #2d2d3f; display: flex; align-items: center; justify-content: space-between; }
+.prompt-block .prompt-header span { color: #a6adc8; font-size: 0.8rem; font-weight: 600; }
+.prompt-block .prompt-header .role-tag { color: #89b4fa; font-size: 0.75rem; background: rgba(137,180,250,0.1); padding: 2px 10px; border-radius: 12px; }
+.prompt-block .prompt-body { padding: 20px; color: #cdd6f4; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; font-family: "SF Mono", "Fira Code", "Consolas", monospace; max-height: 300px; overflow-y: auto; }
+.prompt-block .prompt-body .prompt-prefix { color: #a6e3a1; }
+
+/* ===== Deliverables Grid ===== */
+.deliverable-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.deliverable-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; transition: transform 0.2s; }
+.deliverable-card:hover { transform: translateY(-2px); }
+.deliverable-card .dc-icon { font-size: 2.2rem; margin-bottom: 10px; }
+.deliverable-card .dc-title { font-weight: 700; font-size: 0.95rem; color: #1a1a2e; margin-bottom: 4px; }
+.deliverable-card .dc-type { font-size: 0.75rem; color: #9ca3af; margin-bottom: 8px; }
+.deliverable-card .dc-stat { font-size: 0.8rem; color: #667eea; font-weight: 600; }
+
+/* ===== Bar Chart ===== */
+.bar-chart { display: flex; flex-direction: column; gap: 14px; }
+.bar-row { display: flex; align-items: center; gap: 16px; }
+.bar-label { width: 120px; text-align: right; font-size: 0.85rem; font-weight: 600; color: #1a1a2e; flex-shrink: 0; }
+.bar-track { flex: 1; display: flex; gap: 4px; height: 28px; }
+.bar-seg { border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #fff; min-width: 40px; transition: width 1s ease; }
+.bar-seg.trad { background: #fca5a5; }
+.bar-seg.ai { background: #34d399; }
+.bar-time { width: 90px; font-size: 0.8rem; color: #6b7280; flex-shrink: 0; }
+
+/* ===== Benefit Cards ===== */
+.benefit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.benefit-card { background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.benefit-card h4 { font-size: 1rem; color: #1a1a2e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.benefit-card p, .benefit-card li { font-size: 0.85rem; color: #4b5563; line-height: 1.8; }
+.benefit-card ul { padding-left: 18px; }
+
+/* ===== Footer ===== */
+.footer { text-align: center; padding: 40px 24px; color: #9ca3af; font-size: 0.8rem; border-top: 1px solid #e5e7eb; margin-top: 60px; }
+
+/* ===== Sidebar Navigation ===== */
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; z-index: 100; overflow-y: auto; overflow-x: hidden; transition: transform 0.3s ease; display: flex; flex-direction: column; }
+.sidebar-header { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sidebar-header h3 { color: #fff; font-size: 0.95rem; font-weight: 700; margin: 0; }
+.sidebar-header .ver { font-size: 0.7rem; color: #6b7280; margin-top: 4px; }
+.sidebar-nav { flex: 1; padding: 12px 0; }
+.sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #9ca3af; text-decoration: none; font-size: 0.82rem; border-left: 3px solid transparent; transition: all 0.2s; }
+.sidebar-nav a:hover { color: #e5e7eb; background: rgba(255,255,255,0.04); }
+.sidebar-nav a.active { color: #fff; background: rgba(102,126,234,0.15); border-left-color: #667eea; font-weight: 600; }
+.sidebar-nav a .nav-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,0.08); font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+.sidebar-nav a.active .nav-num { background: #667eea; color: #fff; }
+.main-content { margin-left: 260px; min-height: 100vh; }
+.sidebar-toggle { display: none; position: fixed; top: 16px; left: 16px; z-index: 200; width: 40px; height: 40px; border-radius: 10px; background: #1a1a2e; color: #fff; border: none; cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .sidebar-toggle { display: flex; }
+  .sidebar-overlay.show { display: block; }
+}
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .step-compare { grid-template-columns: 1fr; }
+  .deliverable-grid { grid-template-columns: 1fr 1fr; }
+  .benefit-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 2rem; }
+  .flow-row { flex-direction: column; min-width: auto; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+@media (max-width: 600px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .deliverable-grid { grid-template-columns: 1fr; }
+  .hero { padding: 50px 20px 40px; }
+  .hero .meta { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Sidebar Toggle (Mobile) ===== -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="菜单">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- ===== Sidebar Navigation ===== -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3>📋 报告目录</h3>
+    <div class="ver">V1.0 · 2026.06</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#sec-summary"><span class="nav-num">总</span>核心结论</a>
+    <a href="#sec-1"><span class="nav-num">1</span>整体效率对比总览</a>
+    <a href="#sec-2"><span class="nav-num">2</span>各维度详细对比</a>
+    <a href="#sec-3"><span class="nav-num">3</span>AI Prompt工作流全景</a>
+    <a href="#sec-4"><span class="nav-num">4</span>Prompt指令详解</a>
+    <a href="#sec-5"><span class="nav-num">5</span>实际产出物一览</a>
+    <a href="#sec-6"><span class="nav-num">6</span>综合效益分析</a>
+    <a href="#sec-7"><span class="nav-num">7</span>关键发现与建议</a>
+    <a href="#sec-8"><span class="nav-num">8</span>附录：项目信息</a>
+  </div>
+</nav>
+
+<div class="main-content">
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <h1>AI赋能产品经理工作流<br>效率对比验证报告</h1>
+  <p class="subtitle">基于雀巢益生菌大单礼买赠活动真实项目 · 全流程AI辅助实战验证</p>
+  <div class="meta">
+    <div class="meta-item"><div class="label">项目</div><div class="value">雀巢 · 汇直通 & 能量加油站</div></div>
+    <div class="meta-item"><div class="label">验证周期</div><div class="value">6月08日-6月17日</div></div>
+    <div class="meta-item"><div class="label">AI工具</div><div class="value">OpenCode / 多模型协作</div></div>
+    <div class="meta-item"><div class="label">报告版本</div><div class="value">V1.0</div></div>
+  </div>
+</div>
+
+<!-- ===== Section 0: Executive Summary ===== -->
+<div class="section" id="sec-summary">
+  <div class="section-title"><span class="num">总</span>核心结论</div>
+  <p class="section-desc">以下数据来自同一项目（雀巢益生菌大单礼买赠活动）的传统估算值与AI实测值的对比，覆盖产品经理全工作流5个核心环节。</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon">⏱️</div>
+      <div class="kpi-value">~80%</div>
+      <div class="kpi-label">整体时间节省</div>
+    </div>
+    <div class="kpi-card accent-green">
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-value">6→1.5</div>
+      <div class="kpi-label">工作天数（天→天）</div>
+    </div>
+    <div class="kpi-card accent-orange">
+      <div class="kpi-icon">🔄</div>
+      <div class="kpi-value">3→1</div>
+      <div class="kpi-label">甲方确认轮次（轮→轮）</div>
+    </div>
+    <div class="kpi-card accent-blue">
+      <div class="kpi-icon">📦</div>
+      <div class="kpi-value">5份</div>
+      <div class="kpi-label">一键生成完整交付物</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h3>一句话总结</h3>
+    <p>在雀巢益生菌大单礼买赠活动项目中，传统产品经理全流程（会议纪要→需求分析→时序图→原型→PRD）预估需要 <span class="highlight">5~7个工作日</span>，采用AI赋能工作流后实际耗时 <span class="highlight">约1~2个工作日</span>，效率提升 <span class="highlight">约80%</span>。同时，AI工作流在<span class="highlight">需求完整性、矛盾预识别、文档一致性</span>三个质量维度上实现了传统流程难以达到的系统性保障。</p>
+  </div>
+</div>
+
+<!-- ===== Section 1: Overall Comparison ===== -->
+<div class="section" id="sec-1">
+  <div class="section-title"><span class="num">1</span>整体效率对比总览</div>
+  <p class="section-desc">下表展示5个核心工作环节的传统方式与AI赋能方式的耗时对比（传统耗时为行业经验估算，AI耗时为本次项目实际记录）。</p>
+
+  <div class="comp-table-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="width:10%">环节</th>
+          <th style="width:18%">工作内容</th>
+          <th style="width:14%">传统方式</th>
+          <th style="width:14%">传统耗时</th>
+          <th style="width:14%">AI赋能方式</th>
+          <th style="width:10%">AI耗时</th>
+          <th style="width:10%">效率提升</th>
+          <th style="width:10%">质量提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Step 1</strong></td>
+          <td>原始录音 → 结构化会议纪要</td>
+          <td class="label-trad">逐段回听录音、手工整理笔记、归类决议待办</td>
+          <td>3~4 小时</td>
+          <td class="label-ai">一键发送Prompt，AI自动结构化输出</td>
+          <td>~5 分钟</td>
+          <td><span class="saving">↑ 95%</span></td>
+          <td>决议/待办自动归类，零遗漏</td>
+        </tr>
+        <tr>
+          <td><strong>Step 2</strong></td>
+          <td>会议纪要 → 需求提炼报告</td>
+          <td class="label-trad">凭经验逐条提取需求、评估优先级</td>
+          <td>2~4 小时</td>
+          <td class="label-ai">评分矩阵量化优先级，系统检测矛盾与沉默信号</td>
+          <td>~5 分钟</td>
+          <td><span class="saving">↑ 95%</span></td>
+          <td>矛盾预识别+沉默信号检测</td>
+        </tr>
+        <tr>
+          <td><strong>Step 3</strong></td>
+          <td>需求报告 → 业务时序图</td>
+          <td class="label-trad">Visio/Draw.io 手工绘图（每张1~2h），需求变更需返工</td>
+          <td>2~3 小时</td>
+          <td class="label-ai">Mermaid文本生成，秒级渲染，修改即改文本</td>
+          <td>~5 分钟</td>
+          <td><span class="saving">↑ 94%</span></td>
+          <td>异常分支强制枚举，无遗漏</td>
+        </tr>
+        <tr>
+          <td><strong>Step 4</strong></td>
+          <td>原型图+时序图 → HTML交互原型</td>
+          <td class="label-trad">PRD→UI设计→前端开发原型，信息衰减严重</td>
+          <td>2~3 天</td>
+          <td class="label-ai">以原型图为视觉基准+时序图为行为约束，直接生成可点击HTML</td>
+          <td>~2 小时</td>
+          <td><span class="saving">↑ 88%</span></td>
+          <td>可点击操作，甲方当场验证</td>
+        </tr>
+        <tr>
+          <td><strong>Step 5</strong></td>
+          <td>原型+时序图 → PRD文档</td>
+          <td class="label-trad">先写PRD再出原型，文档与交付物常偏差，3~5轮交叉确认</td>
+          <td>1~1.5 天</td>
+          <td class="label-ai">以已验证原型为唯一事实源，逆向生成PRD，100%对齐</td>
+          <td>~1 小时</td>
+          <td><span class="saving">↑ 88%</span></td>
+          <td>文档=交付物，消除漂移</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Time bar visualization -->
+  <div style="background:#fff;border-radius:14px;padding:28px;margin-top:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+    <h4 style="margin-bottom:20px;font-size:0.95rem;color:#1a1a2e;">各环节耗时可视化对比</h4>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Step 1 会议纪要</div>
+        <div class="bar-track">
+          <div class="bar-seg trad" style="flex:19">3.5h</div>
+          <div class="bar-seg ai" style="flex:1">0.1h</div>
+        </div>
+        <div class="bar-time">↑95%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Step 2 需求提炼</div>
+        <div class="bar-track">
+          <div class="bar-seg trad" style="flex:15">3h</div>
+          <div class="bar-seg ai" style="flex:1">0.1h</div>
+        </div>
+        <div class="bar-time">↑95%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Step 3 时序图</div>
+        <div class="bar-track">
+          <div class="bar-seg trad" style="flex:12">2.5h</div>
+          <div class="bar-seg ai" style="flex:1">0.1h</div>
+        </div>
+        <div class="bar-time">↑94%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Step 4 交互原型</div>
+        <div class="bar-track">
+          <div class="bar-seg trad" style="flex:10">20h</div>
+          <div class="bar-seg ai" style="flex:1">2h</div>
+        </div>
+        <div class="bar-time">↑88%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Step 5 PRD文档</div>
+        <div class="bar-track">
+          <div class="bar-seg trad" style="flex:5">10h</div>
+          <div class="bar-seg ai" style="flex:1">1h</div>
+        </div>
+        <div class="bar-time">↑88%</div>
+      </div>
+    </div>
+    <p style="margin-top:16px;font-size:0.78rem;color:#9ca3af;text-align:center;">红色 = 传统耗时 &nbsp;|&nbsp; 绿色 = AI赋能耗时 &nbsp;|&nbsp; 数据来源：本次项目实测 + 行业经验估算</p>
+  </div>
+</div>
+
+<!-- ===== Section 2: Detail Comparison ===== -->
+<div class="section" id="sec-2">
+  <div class="section-title"><span class="num">2</span>各维度详细对比</div>
+  <p class="section-desc">点击每个环节展开查看传统方式与AI赋能方式的详细对比、实际产出数据和质量差异。</p>
+
+  <!-- Step 1 -->
+  <div class="step-card open" id="step1">
+    <div class="step-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="step-badge" style="background:linear-gradient(135deg,#667eea,#764ba2)">1</div>
+      <div class="step-info">
+        <div class="step-title">原始录音 → 结构化会议纪要</div>
+        <div class="step-sub">输入：2份语音转录（1576行）→ 输出：336行结构化纪要（后精简128行专题版）</div>
+      </div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-card-body">
+      <div class="step-compare">
+        <div class="step-compare-item trad">
+          <h5>🔴 传统方式</h5>
+          <ul>
+            <li>产品经理逐段回听2小时会议录音</li>
+            <li>手工记录要点，凭记忆整理决议和待办</li>
+            <li>耗时 <strong>3~4小时</strong>，且容易遗漏细节</li>
+            <li>决议状态（已定/待定）依赖个人判断，标准不一</li>
+            <li>多方会议信息碎片化，需人工跨场次对齐</li>
+          </ul>
+        </div>
+        <div class="step-compare-item ai">
+          <h5>🟢 AI赋能方式</h5>
+          <ul>
+            <li>将语音转录.md文件放入指定目录</li>
+            <li>发送Prompt，AI自动完成：背景提取→话题分段→决议提取→待办整理→遗留问题</li>
+            <li>耗时 <strong>约5分钟</strong></li>
+            <li>决议自动标注状态（已定/待定），待办自动关联负责人</li>
+            <li>多场会议信息按话题自动对齐合并</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step-output">
+        <h6>本次实际产出</h6>
+        <div class="output-tags">
+          <span class="output-tag">📄 输入：2份转录共1576行</span>
+          <span class="output-tag">📄 输出：336行结构化纪要</span>
+          <span class="output-tag">📌 5个话题分类</span>
+          <span class="output-tag">✅ 12条决议（含状态标注）</span>
+          <span class="output-tag">📋 11项待办（含负责人）</span>
+          <span class="output-tag">⚠️ 5个遗留问题</span>
+          <span class="output-tag">🎯 甲方反馈后精简至128行专题版</span>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:0.82rem;color:#6b7280;"><strong>核心差异：</strong>传统方式下决议和待办容易遗漏，且不同PM输出格式不统一。AI方案确保每次输出的结构和完整性一致，甲方可当场确认"理解是否一致"，不再依赖"谁的笔记记得全"。</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card" id="step2">
+    <div class="step-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="step-badge" style="background:linear-gradient(135deg,#11998e,#38ef7d)">2</div>
+      <div class="step-info">
+        <div class="step-title">会议纪要 → 需求提炼报告</div>
+        <div class="step-sub">输入：128行会议纪要 → 输出：8条REQ + 2矛盾识别 + 8沉默信号 + 专业建议</div>
+      </div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-card-body">
+      <div class="step-compare">
+        <div class="step-compare-item trad">
+          <h5>🔴 传统方式</h5>
+          <ul>
+            <li>PM凭个人经验逐条提取需求，优先级判断主观</li>
+            <li>甲方内部意见冲突通常到开发阶段才暴露（事后补救）</li>
+            <li>"应该讨论但没讨论"的话题容易被忽略</li>
+            <li>专业知识（行业做法、坑点、合规）依赖PM个人积累</li>
+            <li>耗时 <strong>2~4小时</strong></li>
+          </ul>
+        </div>
+        <div class="step-compare-item ai">
+          <h5>🟢 AI赋能方式</h5>
+          <ul>
+            <li>评分矩阵（甲方强调度×流程影响×实现难度×迭代关联度）量化优先级</li>
+            <li>系统检测甲方内部矛盾（如"关闭红包vs非买赠渠道无活动"）→事前预防</li>
+            <li>沉默信号检测：8条应讨论但被跳过的话题</li>
+            <li>行业参考+坑点提醒+技术约束，知识注入超越个人经验</li>
+            <li>耗时 <strong>约5分钟</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="step-output">
+        <h6>本次实际产出</h6>
+        <div class="output-tags">
+          <span class="output-tag">📌 8条REQ（P0×6 / P1×2）</span>
+          <span class="output-tag">⚠️ 2个核心矛盾+处理建议话术</span>
+          <span class="output-tag">🔍 8条沉默信号检测</span>
+          <span class="output-tag">💡 6个坑点提醒+2个技术约束</span>
+          <span class="output-tag">📋 8条待确认事项+建议话术</span>
+          <span class="output-tag">🎯 每条REQ可追溯到纪要原文</span>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:0.82rem;color:#6b7280;"><strong>核心差异：</strong>传统方式下矛盾识别依赖PM敏感度，结果高度依赖个人能力。AI方案以评分矩阵量化优先级、系统化检测沉默信号和矛盾点，产出标准一致，附带的建议话术可直接用于甲方沟通，实现从"事后补救"到"事前预防"的升级。</p>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card" id="step3">
+    <div class="step-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="step-badge" style="background:linear-gradient(135deg,#f093fb,#f5576c)">3</div>
+      <div class="step-info">
+        <div class="step-title">需求提炼报告 → Mermaid业务时序图</div>
+        <div class="step-sub">输入：8条REQ → 输出：3张Mermaid时序图 + 6条流程风险 + 页面流转总览</div>
+      </div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-card-body">
+      <div class="step-compare">
+        <div class="step-compare-item trad">
+          <h5>🔴 传统方式</h5>
+          <ul>
+            <li>在Visio/Draw.io中手工绘制，每张耗时1~2小时</li>
+            <li>需求变更后需返工重画，维护成本高</li>
+            <li>异常分支（alt/opt）容易因人工疏忽遗漏</li>
+            <li>跨系统交互链路（店员→汇直通→三峡→消费者）难以一次性可视化</li>
+          </ul>
+        </div>
+        <div class="step-compare-item ai">
+          <h5>🟢 AI赋能方式</h5>
+          <ul>
+            <li>基于REQ自动生成Mermaid sequenceDiagram</li>
+            <li>分钟级出图，修改仅需调整文本描述即可秒级重新渲染</li>
+            <li>异常分支通过alt/opt语法强制枚举，不会遗漏</li>
+            <li>完整覆盖3个核心场景：店员办单/消费者兑换/库存核销</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step-output">
+        <h6>本次实际产出</h6>
+        <div class="output-tags">
+          <span class="output-tag">📐 3张Mermaid时序图</span>
+          <span class="output-tag">🏪 店员办单全流程（含资格校验/库存校验）</span>
+          <span class="output-tag">📱 消费者扫码兑换流程（含异常分支）</span>
+          <span class="output-tag">📊 库存分配与核销链路</span>
+          <span class="output-tag">⚠️ 6条流程风险点标注</span>
+          <span class="output-tag">🗺️ 页面流转总览（ASCII图）</span>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:0.82rem;color:#6b7280;"><strong>核心差异：</strong>Mermaid文本格式的时序图天然支持版本管理（Git Diff可见），可直接嵌入PRD和HTML中原生渲染，无需额外绘图工具。画图过程会倒逼需求补全——"这个状态谁来触发？""异常分支怎么走？"等问题在出图时自然暴露。</p>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card" id="step4">
+    <div class="step-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="step-badge" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">4</div>
+      <div class="step-info">
+        <div class="step-title">原型图 + 时序图 + 基础资料 → HTML交互原型</div>
+        <div class="step-sub">输入：20张UI截图 + 3张时序图 → 输出：2个HTML原型文件（后台60KB + 移动端129KB）</div>
+      </div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-card-body">
+      <div class="step-compare">
+        <div class="step-compare-item trad">
+          <h5>🔴 传统方式</h5>
+          <ul>
+            <li>先写PRD文字描述 → UI设计师出图 → 前端开发做原型</li>
+            <li>周期 <strong>2~3天</strong>，中间信息衰减严重</li>
+            <li>甲方拿到原型时已偏离原始需求</li>
+            <li>文字到图像的转换存在理解偏差</li>
+            <li>往返沟通3~5轮确认</li>
+          </ul>
+        </div>
+        <div class="step-compare-item ai">
+          <h5>🟢 AI赋能方式</h5>
+          <ul>
+            <li>以原型图（截图/Axure/手绘）为视觉基准</li>
+            <li>以时序图为行为约束，直接生成可点击HTML</li>
+            <li>甲方当场走通全流程，初版即可验证核心交互</li>
+            <li>视觉输入直接映射为视觉输出，偏差更小</li>
+            <li>后续1~2轮微调定稿，周期压缩至<strong>小时级</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="step-output">
+        <h6>本次实际产出</h6>
+        <div class="output-tags">
+          <span class="output-tag">📱 移动端交互原型（129KB）</span>
+          <span class="output-tag">🖥️ 后台管理原型（60KB）</span>
+          <span class="output-tag">👥 3个角色Tab（店员/消费者/后台）</span>
+          <span class="output-tag">📄 12个页面/视图</span>
+          <span class="output-tag">🔄 3条流程完整闭环</span>
+          <span class="output-tag">🎨 5种组件状态（加载/成功/失败/空/禁用）</span>
+          <span class="output-tag">📊 中文真实业务数据填充</span>
+          <span class="output-tag">📱 375px移动端适配</span>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:0.82rem;color:#6b7280;"><strong>核心差异：</strong>这是工作流中最关键的效率突破点。传统方式从PRD到可交互原型需要跨3个角色（PM→UI→前端），信息层层衰减。AI方案跳过PRD环节，以视觉输入直接生成视觉输出，甲方可当场点击操作验证需求，而非靠阅读理解文字描述。</p>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step-card" id="step5">
+    <div class="step-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="step-badge" style="background:linear-gradient(135deg,#f5af19,#f12711)">5</div>
+      <div class="step-info">
+        <div class="step-title">HTML交互原型 + 时序图 → PRD需求文档（逆向生成）</div>
+        <div class="step-sub">输入：2个HTML原型 → 输出：850行HTML PRD（含9节目录/14条FR追溯矩阵/差异识别）</div>
+      </div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-card-body">
+      <div class="step-compare">
+        <div class="step-compare-item trad">
+          <h5>🔴 传统方式</h5>
+          <ul>
+            <li>先写PRD → 再根据PRD生成原型</li>
+            <li>文档描述与最终交付物常有偏差（"PRD写A、原型做B"）</li>
+            <li>需 <strong>3~5轮</strong>交叉确认修正</li>
+            <li>耗时 <strong>1~1.5天</strong></li>
+            <li>文档漂移是传统流程中最常见的质量问题</li>
+          </ul>
+        </div>
+        <div class="step-compare-item ai">
+          <h5>🟢 AI赋能方式</h5>
+          <ul>
+            <li>以甲方已验证通过的原型为<strong>唯一事实源</strong></li>
+            <li>从原型逆向提取功能清单、页面结构、组件行为</li>
+            <li>时序图对账识别遗漏/存疑/冲突，行内标注</li>
+            <li><strong>文档即交付物，100%对齐</strong>，一轮即可归档</li>
+            <li>耗时 <strong>约1小时</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="step-output">
+        <h6>本次实际产出</h6>
+        <div class="output-tags">
+          <span class="output-tag">📄 850行自包含HTML PRD</span>
+          <span class="output-tag">📑 左侧9节目录导航（滚动高亮+点击跳转）</span>
+          <span class="output-tag">🖼️ iframe嵌入原型文件</span>
+          <span class="output-tag">📐 Mermaid CDN内联渲染时序图</span>
+          <span class="output-tag">🔗 14条FR需求追溯矩阵</span>
+          <span class="output-tag">⚠️ 差异识别：2遗漏+3存疑</span>
+          <span class="output-tag">🖨️ 打印友好（@media print）</span>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:0.82rem;color:#6b7280;"><strong>核心差异：</strong>传统流程中"先写PRD再出原型"的信息流向导致文档漂移是常态。AI方案颠覆了这一顺序——先让甲方在可点击原型中验证需求，再以验证通过的交付物逆向生成PRD。文档与交付物100%对齐，从根本上消除了传统流程中最常见的质量问题。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Section 3: AI Prompt Flow ===== -->
+<div class="section" id="sec-3">
+  <div class="section-title"><span class="num">3</span>AI Prompt工作流全景</div>
+  <p class="section-desc">本项目的AI工作流采用线性串行+人工审阅节点的方式，每步产出经人工确认后流入下一步，确保质量可控。与传统流程的最大区别在于：<strong>信息流动方向从"文档→设计→开发"变为"原始输入→AI多步加工→可交付制品"</strong>。</p>
+
+  <div class="flow-container">
+    <div class="flow-row">
+      <div class="flow-step">
+        <div class="fs-num">INPUT</div>
+        <div class="fs-title">原始资料</div>
+        <div class="fs-in">📥 语音转录.md ×2</div>
+        <div class="fs-in">📥 基础资料.md</div>
+        <div class="fs-in">📥 UI截图 ×20</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 1</div>
+        <div class="fs-title">会议纪要</div>
+        <div class="fs-out">📤 结构化纪要.md</div>
+        <div style="font-size:0.65rem;color:#9ca3af;margin-top:4px;">角色：会议记录员</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 2</div>
+        <div class="fs-title">需求提炼</div>
+        <div class="fs-out">📤 需求报告.md</div>
+        <div style="font-size:0.65rem;color:#9ca3af;margin-top:4px;">角色：资深PM</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 3</div>
+        <div class="fs-title">时序图</div>
+        <div class="fs-out">📤 Mermaid时序图.md</div>
+        <div style="font-size:0.65rem;color:#9ca3af;margin-top:4px;">角色：架构师</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 4</div>
+        <div class="fs-title">交互原型</div>
+        <div class="fs-out">📤 HTML原型 ×2</div>
+        <div style="font-size:0.65rem;color:#9ca3af;margin-top:4px;">角色：前端工程师</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 5</div>
+        <div class="fs-title">PRD归档</div>
+        <div class="fs-out">📤 HTML PRD</div>
+        <div style="font-size:0.65rem;color:#9ca3af;margin-top:4px;">角色：产品负责人</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:250px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <h4 style="font-size:0.9rem;color:#1a1a2e;margin-bottom:10px;">🔑 工作流设计原则</h4>
+      <ul style="font-size:0.82rem;color:#4b5563;padding-left:18px;line-height:1.9;">
+        <li><strong>分步执行，每步确认</strong>——每个Prompt专注一个产出，人工审阅后再进入下一步</li>
+        <li><strong>信息优先级规则</strong>——当多源信息不一致时：交互逻辑以时序图为准，视觉以原型图为准，术语以基础资料为准</li>
+        <li><strong>甲方反馈即时迭代</strong>——决策变更后重新发送对应Prompt即可，无需全部返工</li>
+        <li><strong>人工审阅不可跳过</strong>——AI产出必须人工检查，尤其业务逻辑和优先级判断</li>
+      </ul>
+    </div>
+    <div style="flex:1;min-width:250px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <h4 style="font-size:0.9rem;color:#1a1a2e;margin-bottom:10px;">🔄 与传统流程的本质区别</h4>
+      <ul style="font-size:0.82rem;color:#4b5563;padding-left:18px;line-height:1.9;">
+        <li><strong>信息流向反转</strong>——传统：PRD→原型（文档驱动）；AI：原型→PRD（交付物驱动）</li>
+        <li><strong>角色压缩</strong>——传统需PM+UI+前端3角色协作；AI方案1人+AI完成全流程</li>
+        <li><strong>验证前置</strong>——传统甲方在PRD阶段靠阅读验证；AI方案甲方在原型阶段靠点击操作验证</li>
+        <li><strong>文档零漂移</strong>——以已验证交付物逆向生成PRD，100%对齐</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Section 4: Prompt Details ===== -->
+<div class="section" id="sec-4">
+  <div class="section-title"><span class="num">4</span>Prompt指令详解</div>
+  <p class="section-desc">以下5个Prompt是本次项目实战中<strong>实际使用的完整指令</strong>，按工作流线性顺序排列。每个Prompt可直接复制到OpenCode中使用，替换 <code>{项目路径}</code> 为本地项目路径即可。</p>
+
+  <style>
+  .prompt-full-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; }
+  .prompt-full-card .pf-header { padding: 20px 28px; cursor: pointer; display: flex; align-items: center; gap: 16px; user-select: none; transition: background 0.2s; }
+  .prompt-full-card .pf-header:hover { background: #fafbff; }
+  .prompt-full-card .pf-badge { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #fff; flex-shrink: 0; }
+  .prompt-full-card .pf-info { flex: 1; }
+  .prompt-full-card .pf-title { font-size: 1.05rem; font-weight: 700; color: #1a1a2e; }
+  .prompt-full-card .pf-sub { font-size: 0.8rem; color: #9ca3af; margin-top: 2px; }
+  .prompt-full-card .pf-arrow { font-size: 0.8rem; color: #9ca3af; transition: transform 0.3s; }
+  .prompt-full-card.open .pf-arrow { transform: rotate(180deg); }
+  .prompt-full-card .pf-body { display: none; padding: 0 28px 24px; }
+  .prompt-full-card.open .pf-body { display: block; }
+  .pf-section-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #667eea; margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  .pf-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 12px; }
+  .pf-table th { background: #f8fafc; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 0.75rem; color: #6b7280; border: 1px solid #e5e7eb; }
+  .pf-table td { padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563; vertical-align: top; }
+  .pf-table tr:nth-child(even) td { background: #fafbff; }
+  .pf-steps { padding-left: 20px; font-size: 0.82rem; color: #4b5563; line-height: 1.9; margin-bottom: 8px; }
+  .pf-steps li { margin-bottom: 2px; }
+  .pf-code-block { background: #1e1e2e; border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+  .pf-code-header { padding: 10px 16px; background: #2d2d3f; display: flex; align-items: center; justify-content: space-between; }
+  .pf-code-header span { color: #a6adc8; font-size: 0.75rem; font-weight: 600; }
+  .pf-code-header .pf-role-tag { font-size: 0.7rem; background: rgba(137,180,250,0.12); color: #89b4fa; padding: 3px 10px; border-radius: 12px; }
+  .pf-copy-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 14px; background: rgba(255,255,255,0.08); color: #a6adc8; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
+  .pf-copy-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25); }
+  .pf-copy-btn.copied { background: rgba(52,211,153,0.2); color: #34d399; border-color: rgba(52,211,153,0.3); }
+  .pf-code-body { padding: 16px 20px; color: #cdd6f4; font-size: 0.78rem; line-height: 1.65; font-family: "SF Mono","Fira Code","Consolas",monospace; white-space: pre-wrap; max-height: 520px; overflow-y: auto; }
+  .pf-code-body .hl-keyword { color: #cba6f7; }
+  .pf-code-body .hl-heading { color: #89b4fa; font-weight: 600; }
+  .pf-code-body .hl-list { color: #a6e3a1; }
+  .pf-code-body .hl-table { color: #fab387; }
+  .pf-code-body .hl-constraint { color: #f38ba8; }
+  .pf-effect { background: #f0fdf4; border-left: 3px solid #34d399; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 0.82rem; color: #065f46; line-height: 1.7; margin-bottom: 8px; }
+  .pf-effect.trad { background: #fef2f2; border-left-color: #fca5a5; color: #991b1b; }
+  </style>
+
+  <!-- ===== Step 1 ===== -->
+  <div class="prompt-full-card open">
+    <div class="pf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="pf-badge" style="background:linear-gradient(135deg,#667eea,#764ba2)">1</div>
+      <div class="pf-info">
+        <div class="pf-title">原始资料 → 结构化会议纪要</div>
+        <div class="pf-sub">角色：专业会议记录员 | 输出：01-原始资料/会议纪要/会议纪要.md</div>
+      </div>
+      <div class="pf-arrow">▼</div>
+    </div>
+    <div class="pf-body">
+
+      <div class="pf-section-label">核心价值</div>
+      <table class="pf-table">
+        <tr><th style="width:25%">场景</th><th>说明</th></tr>
+        <tr><td>第一轮需求沟通后</td><td>将散乱的对话转录转为可检索、可引用的结构化文档，避免"翻录音找一句话"</td></tr>
+        <tr><td>多场会议信息聚合</td><td>合并多份转录，按话题对齐，消除不同场次中同一话题的信息碎片化</td></tr>
+        <tr><td>内部对齐与甲方确认</td><td>结构化纪要可直接发送甲方确认"我们的理解是否正确"，降低二次沟通成本</td></tr>
+      </table>
+
+      <div class="pf-section-label">使用方式与执行流程</div>
+      <ol class="pf-steps">
+        <li><strong>转录准备</strong>：将会议录音通过豆包/通义听悟/飞书妙记等工具转为 .md 文本，放入 01-原始资料/会议纪要/</li>
+        <li><strong>一键结构化</strong>：发送本 Prompt，AI 自动完成背景提取 → 话题分段 → 决议提取 → 待办整理 → 遗留问题</li>
+        <li><strong>甲方确认</strong>：将生成的纪要发给甲方核验，重点确认「决议状态（已定/待定）」和「待办负责人」</li>
+        <li><strong>专题精简（可选）</strong>：如甲方反馈"只聚焦某业务线"，在对话中追加筛选指令即可</li>
+      </ol>
+
+      <div class="pf-section-label">完整 Prompt 指令</div>
+      <div class="pf-code-block">
+        <div class="pf-code-header"><span>可复制到 OpenCode 中直接使用（替换 {项目路径}）</span><button class="pf-copy-btn" onclick="copyPrompt(this)">📋 复制</button><span class="pf-role-tag">角色：专业会议记录员</span></div>
+<div class="pf-code-body"><span class="hl-heading">## 任务：原始资料 → 结构化会议纪要</span>
+
+<span class="hl-heading">### 角色</span>
+你是一位专业会议记录员。将以下原始会议记录整理为结构化的会议纪要。
+
+<span class="hl-heading">### 输入</span>
+请读取以下文件：
+<span class="hl-list">- {项目路径}/01-原始资料/会议纪要/</span>（所有原始会议记录 .md 文件）
+<span class="hl-list">- {项目路径}/01-原始资料/必看-基础资料.md</span>
+
+<span class="hl-heading">### 执行步骤</span>
+
+<span class="hl-heading">#### 第一步：会议背景提取</span>
+- 会议主题
+- 会议日期与时长
+- 参会人员及其角色（甲方/乙方分别列出）
+- 会议背景与目的（结合必看-基础资料推断）
+
+<span class="hl-heading">#### 第二步：讨论内容分段整理</span>
+按讨论的功能模块或话题分段，每段包含：
+- <strong>话题标题</strong>（10字以内概括）
+- <strong>讨论要点</strong>（逐条列出，保留关键细节）
+- <strong>发言标注</strong>（标明每条内容是谁说的，什么角色）
+- <strong>上下文关联</strong>（该话题是在讨论什么功能时引出的）
+
+<span class="hl-heading">#### 第三步：决议与结论提取</span>
+逐条列出会议中达成的共识或决议：
+- 决议内容
+- 决议类型：已定/待定/需进一步确认
+- 相关负责人
+
+<span class="hl-heading">#### 第四步：待办事项整理</span>
+| 编号 | 待办事项 | 负责人 | 截止时间 | 来源（哪段讨论） |
+
+<span class="hl-heading">#### 第五步：遗留问题</span>
+会议中提出但未充分讨论或被搁置的问题。
+
+<span class="hl-heading">### 输出格式</span>
+
+# XX 会议纪要
+
+## 一、会议基本信息
+- 主题 / 日期 / 时长 / 参会人员及角色
+
+## 二、讨论纪要
+### 2.1 [话题A]
+- <strong>讨论要点</strong>：...
+- <strong>关键发言</strong>：[姓名/角色]：...（原文引用）
+- <strong>关联上下文</strong>：...
+
+## 三、会议决议
+| # | 决议内容 | 状态（已定/待定） | 负责人 |
+
+## 四、待办事项
+| 编号 | 事项 | 负责人 | 截止日期 | 来源 |
+
+## 五、遗留问题
+- 问题1: ...（提出人：XX，未解决原因）
+
+<span class="hl-constraint">### 约束</span>
+<span class="hl-constraint">- 所有讨论要点需引用原文内容</span>
+<span class="hl-constraint">- 不确定的发言人标注"未明确"</span>
+<span class="hl-constraint">- 不编造未讨论的内容</span>
+<span class="hl-constraint">- 决议的"待定"状态要有依据（会议中何人表达过不确定）</span>
+
+<span class="hl-heading">### 文件输出</span>
+写入：{项目路径}/01-原始资料/会议纪要/会议纪要.md</div>
+      </div>
+
+      <div class="pf-section-label">实际效果</div>
+      <div class="pf-effect">本案例输入 2 份语音转录（共 1576 行），输出 336 行结构化会议纪要，后根据甲方反馈精简为 128 行专题版，涵盖 5 个话题、12 条决议、11 项待办、5 个遗留问题。</div>
+      <div class="pf-effect trad">对比传统流程：产品经理需逐段回听录音、手工整理笔记，2 小时会议录音通常耗时 3~4 小时整理，且决议和待办容易遗漏。本方案一键生成结构化纪要，耗时缩短至分钟级，决议状态/待办负责人/遗留问题自动归类，甲方可当场确认理解是否一致。</div>
+    </div>
+  </div>
+
+  <!-- ===== Step 2 ===== -->
+  <div class="prompt-full-card">
+    <div class="pf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="pf-badge" style="background:linear-gradient(135deg,#11998e,#38ef7d)">2</div>
+      <div class="pf-info">
+        <div class="pf-title">会议纪要 → 需求提炼报告</div>
+        <div class="pf-sub">角色：资深产品经理 | 输出：02-需求分析/需求提炼报告.md</div>
+      </div>
+      <div class="pf-arrow">▼</div>
+    </div>
+    <div class="pf-body">
+
+      <div class="pf-section-label">核心价值</div>
+      <table class="pf-table">
+        <tr><th style="width:25%">场景</th><th>说明</th></tr>
+        <tr><td>需求散落在多段对话中</td><td>从纪要中逐条提取并标准化为 REQ 编号，告别凭记忆整理</td></tr>
+        <tr><td>甲方意见隐性冲突</td><td>识别"张总说要做 X、李总说 X 不重要"类的内部矛盾，提前暴露而非等到开发阶段才发现</td></tr>
+        <tr><td>遗漏风险</td><td>沉默信号检测——找出应该讨论但被跳过的话题，纳入待确认清单</td></tr>
+        <tr><td>PM 专业价值体现</td><td>知识注入——行业常见做法、坑点提醒、合规约束，让产出超越"复述会议"</td></tr>
+      </table>
+
+      <div class="pf-section-label">使用方式与执行流程</div>
+      <ol class="pf-steps">
+        <li><strong>准备输入</strong>：确保 Step 1 会议纪要已经过甲方确认（或至少经过内部评审），避免基于错误纪要做分析</li>
+        <li><strong>需求提取</strong>：发送本 Prompt，AI 自动完成需求提取 → 优先级评估 → 矛盾识别 → 沉默信号检测 → 专业建议</li>
+        <li><strong>内部评审</strong>：PM 逐条审核 REQ 优先级、矛盾处理建议和专业建议，修正 AI 判断偏差</li>
+        <li><strong>输出待确认清单</strong>：将第六章「待确认事项」提取出来，作为与甲方下一轮沟通的议程</li>
+      </ol>
+
+      <div class="pf-section-label">完整 Prompt 指令</div>
+      <div class="pf-code-block">
+        <div class="pf-code-header"><span>可复制到 OpenCode 中直接使用</span><button class="pf-copy-btn" onclick="copyPrompt(this)">📋 复制</button><span class="pf-role-tag">角色：资深产品经理</span></div>
+<div class="pf-code-body"><span class="hl-heading">## 任务：会议纪要 → 需求提炼报告</span>
+
+<span class="hl-heading">### 角色</span>
+你是一位资深产品经理。基于结构化会议纪要，提取所有需求并完成专业分析。
+
+<span class="hl-heading">### 输入</span>
+请读取以下文件：
+<span class="hl-list">- {项目路径}/01-原始资料/会议纪要/会议纪要.md</span>
+<span class="hl-list">- {项目路径}/01-原始资料/必看-基础资料.md</span>
+
+<span class="hl-heading">### 执行步骤</span>
+
+<span class="hl-heading">#### 第一步：需求提取与标准化</span>
+从会议纪要中逐条提取需求，转化为标准化需求条目：
+- 需求编号：REQ-001
+- 需求标题：15字以内
+- 需求描述：一句话说清用户要什么、不要什么
+- 关联模块
+- 来源：会议纪要中哪段讨论/谁的发言
+- 与现有系统关系：冲突/补充/新增
+
+<span class="hl-heading">#### 第二步：优先级评估</span>
+每项需求按以下维度打分（1-5分）：
+- 甲方强调程度（反复提及=5，一笔带过=1）
+- 对核心业务流程的影响程度
+- 实现难度预估（越易实现且价值高=优先）
+- 与当前迭代目标的关联度
+综合给出：P0（必须本迭代）/ P1（下迭代）/ P2（后续）/ P3（观察项）
+
+<span class="hl-heading">#### 第三步：矛盾与冲突识别</span>
+识别以下情况：
+- 甲方内部意见不一致
+- 需求之间互斥
+- 技术可行性存疑
+每项矛盾给出处理建议：确认对象、确认方式、建议话术。
+
+<span class="hl-heading">#### 第四步：沉默信号检测</span>
+识别应讨论但未触及的问题：
+- 被跳过或回避的话题
+- 提出后被岔开的关键疑问
+- 甲方可能"没说"的隐含诉求（标注为推测）
+
+<span class="hl-heading">#### 第五步：专业知识注入</span>
+- 行业常见做法
+- 潜在坑点
+- 合规/技术约束提醒
+
+<span class="hl-heading">### 输出格式</span>
+# 会议需求提炼报告
+## 一、会议基本信息
+## 二、需求清单（编号/标题/描述/关联模块/来源/与现有系统关系/优先级/建议排期）
+## 三、矛盾与风险项（每条附处理建议+建议话术）
+## 四、沉默信号（#/问题/严重程度/推测或事实）
+## 五、专业建议（行业参考/坑点提醒/技术约束）
+## 六、待确认事项（优先级/事项/确认对象/建议话术）
+
+<span class="hl-constraint">### 约束</span>
+<span class="hl-constraint">- 所有结论需引用会议纪要原文作为依据</span>
+<span class="hl-constraint">- 不确定的信息标注"待确认"，不编造</span>
+<span class="hl-constraint">- 推测性内容明确标注"推测"</span>
+<span class="hl-constraint">- 优先级判断给出评分依据</span>
+
+<span class="hl-heading">### 文件输出</span>
+写入：{项目路径}/02-需求分析/需求提炼报告.md</div>
+      </div>
+
+      <div class="pf-section-label">实际效果</div>
+      <div class="pf-effect">本案例从 128 行会议纪要提取出 8 条 REQ（P0×6 / P1×2），识别 2 个核心矛盾、8 条沉默信号，输出 6 个坑点提醒 + 2 个技术约束，含 8 条待确认事项及建议话术。</div>
+      <div class="pf-effect trad">对比传统流程：产品经理凭个人经验评估优先级和识别矛盾，结果高度依赖 PM 能力，且甲方内部意见冲突往往到开发阶段才暴露。本方案以评分矩阵量化优先级、系统化检测沉默信号和矛盾点，产出标准一致，附带建议话术可直接用于甲方沟通，矛盾识别从"事后补救"升级为"事前预防"。</div>
+    </div>
+  </div>
+
+  <!-- ===== Step 3 ===== -->
+  <div class="prompt-full-card">
+    <div class="pf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="pf-badge" style="background:linear-gradient(135deg,#f093fb,#f5576c)">3</div>
+      <div class="pf-info">
+        <div class="pf-title">需求提炼报告 → Mermaid 业务时序图</div>
+        <div class="pf-sub">角色：技术架构师兼业务流程分析师 | 输出：03-PRD/业务时序图.md</div>
+      </div>
+      <div class="pf-arrow">▼</div>
+    </div>
+    <div class="pf-body">
+
+      <div class="pf-section-label">核心价值</div>
+      <table class="pf-table">
+        <tr><th style="width:25%">场景</th><th>说明</th></tr>
+        <tr><td>多人多系统协作流程</td><td>用 sequenceDiagram 把"店员点按钮 → 系统调接口 → 消费者看到结果"这类跨角色跨系统的交互链路一次性可视化</td></tr>
+        <tr><td>需求评审对齐</td><td>时序图比文字列表更直观，甲方/开发/测试三方看同一张图，减少"我以为你知道"的沟通偏差</td></tr>
+        <tr><td>流程断层提前暴露</td><td>画图过程中会自然暴露出"这个状态谁来触发？""异常分支怎么走？"等问题，倒逼需求补全</td></tr>
+        <tr><td>可嵌入 PRD 和 HTML</td><td>Mermaid 语法生成的时序图可直接粘贴到 PRD 和 HTML 中原生渲染，无需额外绘图工具</td></tr>
+      </table>
+
+      <div class="pf-section-label">使用方式与执行流程</div>
+      <ol class="pf-steps">
+        <li><strong>确认需求基线</strong>：确保 Step 2 需求提炼报告已内部评审，REQ 条目和优先级稳定后再画时序图（避免需求变更导致重画）</li>
+        <li><strong>生成时序图</strong>：发送本 Prompt，AI 基于需求报告自动识别参与者 → 绘制正常流程 → 补充异常分支 → 标注风险点</li>
+        <li><strong>流程走查</strong>：对照时序图逐条走一遍"如果我是店员/消费者/后台，我会怎么操作？"，检查是否有死胡同或逻辑跳跃</li>
+        <li><strong>风险确认</strong>：将「识别的流程风险」表提取出来，与开发/甲方确认处理方案</li>
+      </ol>
+
+      <div class="pf-section-label">完整 Prompt 指令</div>
+      <div class="pf-code-block">
+        <div class="pf-code-header"><span>可复制到 OpenCode 中直接使用</span><button class="pf-copy-btn" onclick="copyPrompt(this)">📋 复制</button><span class="pf-role-tag">角色：架构师+流程分析师</span></div>
+<div class="pf-code-body"><span class="hl-heading">## 任务：需求提炼报告 → Mermaid 业务时序图</span>
+
+<span class="hl-heading">### 角色</span>
+你是一位技术架构师兼业务流程分析师。基于需求提炼报告，将核心业务流程转化为 Mermaid sequenceDiagram 时序图。
+
+<span class="hl-heading">### 输入</span>
+<span class="hl-list">- {项目路径}/02-需求分析/需求提炼报告.md</span>
+<span class="hl-list">- {项目路径}/01-原始资料/会议纪要/会议纪要.md</span>（回溯流程上下文）
+<span class="hl-list">- {项目路径}/01-原始资料/必看-基础资料.md</span>
+
+<span class="hl-heading">### 执行步骤</span>
+
+<span class="hl-heading">#### 第一步：识别参与者</span>
+从需求报告中提取所有涉及的系统、角色：
+- <strong>用户角色</strong>（店员、消费者、后台管理员等）
+- <strong>系统</strong>（汇直通、能量加油站、三峡、小河马、CIRA等）
+- <strong>外部角色</strong>（雀巢销售代表、物流等）
+用 Mermaid participant 语法声明，中文别名放在引号内。
+
+<span class="hl-heading">#### 第二步：提炼核心时序流程</span>
+对每个核心业务场景逐条绘制 sequenceDiagram：
+
+<strong>必须覆盖的场景（至少）：</strong>
+1. <strong>店员办单流程</strong>：店员在汇直通选商品→选益生菌规格→确认办单→生成办单记录（展示"门店发货"）
+2. <strong>消费者扫码兑换流程</strong>：消费者扫码→能量加油站校验资格→展示买赠入口→跳转三峡→查看赠品→点击"已领取"→三峡扣减库存→返回确认
+3. <strong>库存分配→核销链路</strong>：后台分配礼品→大区→代表→门店→消费者兑换→数据对账
+
+<strong>每个时序图需包含：</strong>
+- 正常流程（happy path）完整消息链
+- 关键异常分支（用 alt / opt 标注）：扫码校验不通过/门店不在白名单/消费者不点"已领取"超时
+- 跨系统交互的关键接口/数据传递（箭头标注传递的数据）
+
+<span class="hl-heading">#### 第三步：标注流程中的风险点</span>
+在时序图注释中用 Note 标注：
+- 依赖消费者操作的环节（如点击"已领取"）
+- 数据不一致风险点（如线下库存 vs 系统记录）
+- 待确认的流程分支
+
+<span class="hl-heading">### 输出格式</span>
+# 益生菌大单礼买赠活动 — 业务时序图
+## 1. 店员办单流程（Mermaid sequenceDiagram）
+## 2. 消费者扫码兑换流程（Mermaid sequenceDiagram）
+## 3. 库存分配与核销流程（Mermaid sequenceDiagram）
+## 4. 识别的流程风险（风险点/所在图/说明/建议表）
+
+<span class="hl-constraint">### Mermaid 语法要求</span>
+<span class="hl-constraint">- 使用 sequenceDiagram 类型</span>
+<span class="hl-constraint">- 参与者用中文别名：participant 汇直通 as 汇直通（店员办单小程序）</span>
+<span class="hl-constraint">- 箭头类型：->> 同步请求/响应，-->> 异步通知/回调</span>
+<span class="hl-constraint">- 分支用 alt/else，可选用 opt</span>
+<span class="hl-constraint">- 注释用 Note over 角色: 内容 标注业务说明和风险</span>
+
+<span class="hl-constraint">### 约束</span>
+<span class="hl-constraint">- 流程图必须能从需求报告的 REQ 编号追溯到对应需求</span>
+<span class="hl-constraint">- 参与者定义必须与必看-基础资料中的系统名称一致</span>
+<span class="hl-constraint">- 不做视觉美化，专注流程正确性和完整性</span>
+<span class="hl-constraint">- 如有不确定的交互步骤，用 Note 标注"待确认"而非编造</span>
+
+<span class="hl-heading">### 文件输出</span>
+写入：{项目路径}/03-PRD/业务时序图.md</div>
+      </div>
+
+      <div class="pf-section-label">实际效果</div>
+      <div class="pf-effect">本案例基于 8 条 REQ 生成 3 张 Mermaid 时序图，完整覆盖 3 个核心业务场景（店员办单/消费者扫码兑换/库存核销），每张含正常流程 + 异常分支（资格不符/库存不足/超时未操作），标注 6 条流程风险点。</div>
+      <div class="pf-effect trad">对比传统流程：产品经理在 Visio / Draw.io 中手工绘图，每张耗时 1~2 小时，需求变更后需返工重画。本方案基于 REQ 自动生成 Mermaid 时序图，分钟级出图，修改仅需调整文本描述即可秒级重新渲染，且异常分支通过 alt/opt 语法强制枚举，不会因人工疏忽遗漏。</div>
+    </div>
+  </div>
+
+  <!-- ===== Step 4 ===== -->
+  <div class="prompt-full-card">
+    <div class="pf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="pf-badge" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">4</div>
+      <div class="pf-info">
+        <div class="pf-title">原型图 + 时序图 + 基础资料 → HTML 交互原型</div>
+        <div class="pf-sub">角色：资深前端交互原型工程师 | 输出：04-原型/交互原型.html</div>
+      </div>
+      <div class="pf-arrow">▼</div>
+    </div>
+    <div class="pf-body">
+
+      <div class="pf-section-label">核心价值</div>
+      <p style="font-size:0.82rem;color:#4b5563;margin-bottom:12px;">这是工作流中<strong>最关键的交付演示环节</strong>——让甲方能走通完整流程、验证需求逻辑、直观理解系统行为，而非仅靠文字想象。</p>
+      <table class="pf-table">
+        <tr><th style="width:20%">项目阶段</th><th>做法</th></tr>
+        <tr><td>0→1 从零启动</td><td>截取类似竞品或参考项目页面，或 Axure/手绘主要页面内容与布局</td></tr>
+        <tr><td>迭代优化</td><td>已有上一版原型或设计稿，增量修改或追加新模块</td></tr>
+      </table>
+      <table class="pf-table" style="margin-top:12px;">
+        <tr><th style="width:30%">传统方式</th><th>本方案</th></tr>
+        <tr><td>先写 PRD → 再根据 PRD 生成原型</td><td>直接从原型图 + 时序图生成原型</td></tr>
+        <tr><td>文字描述交互行为，甲方靠阅读理解</td><td>可点击操作，甲方亲自走通流程</td></tr>
+        <tr><td>文字到图像的转换存在理解偏差</td><td>视觉输入直接映射为视觉输出，偏差更小</td></tr>
+        <tr><td>往返沟通 3-5 轮确认</td><td>原型当场演示后 1-2 轮即可定稿</td></tr>
+      </table>
+
+      <div class="pf-section-label">使用方式与执行流程</div>
+      <ol class="pf-steps">
+        <li><strong>搭建框架</strong>：将原型图 + 时序图 + 基础资料一并提供给 minimax-m3 等多模态模型，使用本 Prompt 生成初版 HTML 原型</li>
+        <li><strong>微调完善</strong>：将生成的 HTML 在浏览器中运行，对照时序图逐流程走查，发现跳转缺失、状态遗漏或样式偏差后，在原对话中继续用自然语言微调（如"将主色调改为 #1890FF""补齐支付失败的错误提示弹窗""列表增加上拉加载"等）</li>
+        <li><strong>交付演示</strong>：最终 HTML 以单文件形式交付，甲方可直接在浏览器中打开操作</li>
+      </ol>
+
+      <div class="pf-section-label">完整 Prompt 指令</div>
+      <div class="pf-code-block">
+        <div class="pf-code-header"><span>可复制到 OpenCode 中直接使用（配合多模态模型）</span><button class="pf-copy-btn" onclick="copyPrompt(this)">📋 复制</button><span class="pf-role-tag">角色：资深前端交互原型工程师</span></div>
+<div class="pf-code-body"><span class="hl-heading">## 任务：原型图 + 时序图 + 基础资料 → HTML 交互原型生成</span>
+
+<span class="hl-heading">### 角色</span>
+你是资深前端交互原型工程师。收到以下三组输入，完成：
+1. 以原型图为视觉基准，逐页面还原布局与组件
+2. 以时序图为核心行为规范，串联交互跳转逻辑，形成闭环流程
+3. 以基础资料为业务上下文，填充合理的文案与模拟数据
+4. 补全原型中缺失但流程必需的状态（加载、空态、错误、确认弹窗等）
+5. 输出一个可直接在浏览器中运行的独立 HTML 文件
+
+<span class="hl-heading">### 输入</span>
+<span class="hl-list">- 产品原型图</span>（多张，截图/Axure/手绘稿，按页面或流程命名）
+<span class="hl-list">- {项目路径}/03-PRD/业务时序图.md</span>（定义参与者、消息传递、条件分支、异常路径）
+<span class="hl-list">- {项目路径}/01-原始资料/必看-基础资料.md</span>（业务背景、术语定义、角色权限、数据样例）
+
+<span class="hl-heading">### 信息优先级规则（当多源信息不一致时）</span>
+1. <strong>交互逻辑</strong>：以业务时序图为准（它定义了"什么条件下发生什么"）
+2. <strong>视觉呈现</strong>：以原型图为准（它定义了"页面长什么样"）
+3. <strong>文案与术语</strong>：以基础资料为准（它定义了"该怎么叫"）
+4. 若原型图与上述两份文档均未覆盖的细节，基于常见 UI 规范合理推断，并标注 TODO: [待确认]
+
+<span class="hl-heading">### 执行步骤</span>
+
+<span class="hl-heading">#### 第一步：业务上下文对齐</span>
+- 从基础资料中提取：项目背景、角色定义、核心术语表、数据实体与字段
+- 从时序图中提取：所有参与者、消息序列、条件分支（alt/opt/loop）、异常处理路径
+- 建立"角色→页面可见性"映射关系（如：店员端看到 X、消费者端看到 Y）
+
+<span class="hl-heading">#### 第二步：原型解读与页面拆解</span>
+- 识别原型图中包含的所有独立页面/视图
+- 逐个提取：布局结构、组件清单、文案内容、配色与字体层级
+- 将每个页面与时序图中的对应步骤做交叉校验，标注页面是否覆盖了时序图定义的所有状态
+
+<span class="hl-heading">#### 第三步：交互链路梳理</span>
+- 以时序图为主线，梳理页面间的完整跳转关系：触发入口 → 目标页面 → 返回路径
+- 识别所有可交互元素，并与时序图中的消息一一对应
+- 检查是否存在"死胡同"，补充返回/关闭逻辑
+- 按时序图的分支条件，实现完整的正常流程 + 异常流程
+- 补充流程必要的中间状态：加载中、提交成功/失败、二次确认、空数据……
+
+<span class="hl-heading">#### 第四步：数据模拟与状态覆盖</span>
+- 基于基础资料中的数据实体定义，构造 3-5 条合理的模拟数据
+- 表单元素覆盖：默认态、聚焦态、填写中、错误提示 四种状态
+- 涉及增删改操作的，在 JS 中维护数据并实时更新 DOM
+
+<span class="hl-heading">#### 第五步：HTML 编码与集成</span>
+- 所有页面在同一个 .html 文件中以 SPA 模式切换
+- 组件样式通过内部 &lt;style&gt; 标签统一管理
+- 交互逻辑通过内部 &lt;script&gt; 标签实现
+- 适配桌面端 1440×900 基准，关键页面给出 375px 移动端基础适配
+
+<span class="hl-heading">### 输出格式</span>
+单文件 HTML，结构：&lt;!DOCTYPE html&gt; → &lt;style&gt;全局样式 → &lt;body&gt;页面容器+弹出层 → &lt;script&gt;路由/数据/交互/分支
+
+<span class="hl-constraint">### 约束</span>
+<span class="hl-constraint">- 所有页面必须在同一文件中，开箱即用，无需任何构建工具</span>
+<span class="hl-constraint">- 不依赖外部 CDN 中不可控的第三方库（图标可用 Unicode 或内联 SVG）</span>
+<span class="hl-constraint">- 同一组件在全部页面中保持样式一致</span>
+<span class="hl-constraint">- 禁止使用 &lt;a&gt; 标签的 href 做真实页面跳转，所有导航必须通过 JS 控制</span>
+<span class="hl-constraint">- 时序图中定义的每条消息路径必须有对应的交互跳转，不得遗漏</span>
+<span class="hl-constraint">- 不确定的交互细节标注为 TODO 注释，供后续微调</span>
+
+<span class="hl-heading">### 文件输出</span>
+写入：{项目路径}/04-原型/交互原型.html</div>
+      </div>
+
+      <div class="pf-section-label">实际效果</div>
+      <div class="pf-effect">本案例输入原型图（截图/Axure/手绘稿）+ 3 张时序图 + 基础资料，单次生成约 650 行自包含 HTML 交互原型。覆盖 3 个角色 Tab（店员/消费者/后台）、12 个页面/视图、3 条流程完整闭环、5 种组件状态（加载/成功/失败/空/禁用），数据全部基于基础资料填充中文真实业务数据。</div>
+      <div class="pf-effect trad">对比传统流程：产品经理先写 PRD 文字描述交互 → UI 设计师出图 → 前端开发做原型，周期 2~3 天，中间信息衰减严重，甲方拿到原型时已偏离原始需求。本方案跳过 PRD 环节，以原型图为视觉基准、时序图为行为约束，直接生成可点击 HTML，甲方当场走通全流程，初版即可验证核心交互，后续 1~2 轮微调定稿，周期从数天压缩到小时级。</div>
+    </div>
+  </div>
+
+  <!-- ===== Step 5 ===== -->
+  <div class="prompt-full-card">
+    <div class="pf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="pf-badge" style="background:linear-gradient(135deg,#f5af19,#f12711)">5</div>
+      <div class="pf-info">
+        <div class="pf-title">HTML交互原型 + 时序图 + 基础资料 → PRD需求文档（逆向生成）</div>
+        <div class="pf-sub">角色：产品负责人 | 输出：03-PRD/PRD需求文档.html</div>
+      </div>
+      <div class="pf-arrow">▼</div>
+    </div>
+    <div class="pf-body">
+
+      <div class="pf-section-label">核心价值</div>
+      <table class="pf-table">
+        <tr><th style="width:25%">场景</th><th>说明</th></tr>
+        <tr><td>甲方已确认原型</td><td>以原型的实际实现为"唯一事实来源"，逆向生成 PRD，文档即交付物</td></tr>
+        <tr><td>需正式归档</td><td>将交互原型中分散的页面、组件、数据、流程系统化为可评审的正式需求文档</td></tr>
+        <tr><td>开发团队交接</td><td>HTML PRD 带左侧导航和交互式 Mermaid 时序图，开发可按模块独立阅读</td></tr>
+        <tr><td>后续迭代参考</td><td>原型的 TODO/DEV_NOTE 注释自动转录为 PRD 中的"待确认"项，不遗漏</td></tr>
+      </table>
+
+      <div class="pf-section-label">使用方式与执行流程</div>
+      <ol class="pf-steps">
+        <li><strong>准备输入</strong>：确保 Step 4 的 HTML 原型已在浏览器中跑通全流程、时序图已评审、基础资料已更新至最新版本</li>
+        <li><strong>逆向提取</strong>：将原型 HTML（单个或多个）+ 时序图 MD + 基础资料 MD 一并提供给模型，使用本 Prompt 生成 HTML 格式 PRD</li>
+        <li><strong>交叉校验</strong>：将生成的 HTML PRD 中"需求追溯矩阵"与原型逐页对照，确认无遗漏；将识别的遗漏项/存疑项/冲突项作为评审会议议程</li>
+        <li><strong>归档交付</strong>：最终 HTML PRD 以单文件形式交付，甲方/开发可直接在浏览器中打开，左侧目录导航 + 内联 Mermaid 时序图实现"读文档即读系统"</li>
+      </ol>
+
+      <div class="pf-section-label">完整 Prompt 指令</div>
+      <div class="pf-code-block">
+        <div class="pf-code-header"><span>可复制到 OpenCode 中直接使用（输入原型 HTML + 时序图 + 基础资料）</span><button class="pf-copy-btn" onclick="copyPrompt(this)">📋 复制</button><span class="pf-role-tag">角色：产品负责人</span></div>
+<div class="pf-code-body"><span class="hl-heading">## 任务：HTML 交互原型 + 业务时序图 + 基础资料 → PRD需求文档生成（HTML 格式）</span>
+
+你是该项目产品负责人。手头已有以下制品，完成：
+1. 从 HTML 交互原型（单个或多个文件）中逆向提取完整的功能清单、页面结构、组件行为与数据需求
+2. 以业务时序图为核心依据，梳理用户操作流程、条件分支与异常处理
+3. 以基础资料为业务上下文，补全背景、角色、术语与范围边界
+4. 输出一份可直接在浏览器中打开、带有交互式左侧导航的 HTML PRD 文档
+5. 标注所有原型与文档之间存在差异、需要甲方确认的决策点，以行内标注形式嵌入各模块内容中
+
+<span class="hl-heading">## 全局输入文件</span>
+
+本 Prompt 中所有内容章节均基于以下输入文件生成：
+
+| 输入文件 | 路径 | 用途 |
+|---------|------|------|
+| 交互原型 | {项目路径}/04-原型/{原型名称}.html（单个或多个） | 页面结构、组件行为、数据模拟、状态覆盖——功能需求的"唯一事实来源" |
+| 业务时序图 | {项目路径}/03-PRD/业务时序图.md | 用户操作流程、条件分支（alt/opt/loop）、异常处理——时序逻辑的权威依据 |
+| 基础资料 | {项目路径}/01-原始资料/必看-基础资料.md | 业务背景、角色定义、术语表、范围边界——业务上下文的词汇表 |
+
+<span class="hl-heading">## 信息推导规则</span>
+
+| 信息维度 | 主要来源 | 冲突处理 |
+|----------|---------|---------|
+| 背景与目标 | 基础资料 | 以基础资料为准 |
+| 功能清单与范围 | 交互原型 | 原型实现但时序图未定义 → "存疑"；时序图定义但原型未实现 → "遗漏" |
+| 用户操作流程 | 时序图 | 以时序图为准，原型额外交互标注"已实现但时序图未覆盖" |
+| 页面结构与组件 | 交互原型 | 以原型为准，术语对齐基础资料 |
+| 异常流程与边界条件 | 时序图 alt/opt/loop | 以时序图为准 |
+| 非功能需求 | 基础资料 + 原型代码注释 | 双向提取 |
+| 数据需求 | 原型模拟数据 + 表单字段 | 以原型为基准，术语对齐基础资料 |
+
+<span class="hl-heading">## 执行步骤</span>
+
+<span class="hl-heading">### 第一步：原型逆向提取</span>
+逐页、逐组件分析所有交互原型 HTML 文件，产出清单：
+- <strong>页面清单</strong>：所有页面/视图名称、路由关系、可见条件，标注各页面所属的原型文件
+- <strong>组件清单</strong>：按钮、输入框、列表、Tab、弹窗、Toast、加载态及其行为描述
+- <strong>交互矩阵</strong>：页面间跳转关系（起点 → 触发动作 → 终点 → 能否返回）
+- <strong>数据清单</strong>：模拟数据实体与字段、表单输入/输出字段
+- <strong>状态覆盖</strong>：原型中实现了哪些状态（正常/空/加载/错误/成功/禁用）
+
+<span class="hl-heading">### 第二步：时序图对齐与差异识别</span>
+- 将交互矩阵与业务时序图中的消息路径逐条对账
+- 识别三类差异以行内标签标注：
+  - ⚠️ 待开发 — 时序图定义了、原型未实现 → 写入功能需求
+  - 🟡 待确认 — 原型实现了、时序图未覆盖 → 写入异常流程与边界条件
+  - 🔴 冲突 — 两者对同一事件定义不同 → 附推荐方案与分析依据
+- 基于时序图 alt/opt/loop 分支，逐项补全异常流程与边界条件
+
+<span class="hl-heading">### 第三步：基础资料融合</span>
+- 将必看-基础资料中的业务背景、角色定义、术语表注入 PRD 对应章节
+- 将原型中的角色/权限设置与基础资料中的角色定义交叉校验
+- 将原型中的文案/字段名对齐基础资料术语表
+
+<span class="hl-heading">### 第四步：HTML PRD 编码</span>
+按照标准结构组织，确保：
+- 模块使用真实业务术语命名
+- 功能需求按角色维度分组
+- 每个模块的"用户操作流程"通过 Mermaid CDN 内联渲染时序图
+- 每个模块以 iframe 嵌入对应的交互原型 HTML 文件，支持折叠/展开
+- 每个需求项可追溯到原型中的具体页面/组件
+- 交互说明描述"做什么"，不描述"长什么样"
+- PRD 文档本身是独立的 HTML 文件，带左侧目录导航、可折叠章节、表格与代码块
+- 存疑/冲突/遗漏项以行内标签标注于对应模块内容中
+
+<span class="hl-heading">## 输出格式</span>
+单个自包含 HTML 文件，具备：
+1. <strong>左侧固定导航栏</strong>：按章节层级（一～六节）生成可点击目录，滚动高亮
+2. <strong>右侧内容区</strong>：PRD 正文，专业文档排版
+3. <strong>Mermaid 时序图内联渲染</strong>：通过 CDN 加载 Mermaid
+4. <strong>交互原型 iframe 嵌入</strong>：各功能模块以 iframe 嵌入对应原型，默认收起
+5. <strong>表格</strong>：带斑马纹和边框
+6. <strong>状态标签</strong>：待确认/待评估使用醒目样式
+7. <strong>打印友好</strong>：@media print 隐藏导航和 iframe
+8. <strong>响应式</strong>：桌面端为主，小屏导航可收起为汉堡菜单
+
+<span class="hl-constraint">### 约束</span>
+<span class="hl-constraint">- 输出为单个独立 HTML 文件，可在浏览器中直接打开，无需构建工具</span>
+<span class="hl-constraint">- Mermaid 通过 CDN 加载，不内联完整 Mermaid 源码</span>
+<span class="hl-constraint">- 左侧导航须与内容区锚点联动，支持点击跳转和滚动自动高亮</span>
+<span class="hl-constraint">- 所有 PRD 需求项必须可追溯到原型中的具体页面/组件或时序图中的具体步骤</span>
+<span class="hl-constraint">- 术语严格对齐基础资料中的定义</span>
+<span class="hl-constraint">- 交互说明仅描述"做什么"，不描述字体大小、颜色、圆角等 UI 细节</span>
+<span class="hl-constraint">- 差异项以行内标签嵌入对应模块，不另设独立章节</span>
+<span class="hl-constraint">- 交互原型以 iframe 嵌入各功能模块，src 使用相对路径，默认收起</span>
+
+<span class="hl-heading">## 文件输出</span>
+写入：{项目路径}/03-PRD/PRD需求文档.html</div>
+      </div>
+
+      <div class="pf-section-label">实际效果</div>
+      <div class="pf-effect">本案例从 Step 4 HTML 交互原型逆向提取：12 个页面/视图、3 个角色维度、18 条跳转路径。生成约 850 行自包含 HTML PRD，含 Mermaid.js CDN 渲染时序图、左侧 9 节目录导航（滚动高亮 + 点击跳转）、斑马纹表格、🟡待确认 / ⚠️待开发评估标签。差异识别产出 2 条遗漏项 + 3 条存疑项，需求追溯矩阵覆盖 8 条 REQ → 12 个原型页面 → 时序图步骤的完整映射链。</div>
+      <div class="pf-effect trad">对比传统流程：产品经理先写 PRD 再出原型，文档描述与最终交付物常有偏差（"PRD 写的是 A、原型做的是 B"），需 3~5 轮交叉确认修正。本方案以甲方已验证通过的原型为唯一事实源，逆向生成 PRD，文档即交付物、100% 对齐，一轮即可归档，消除了传统流程中最常见的文档漂移问题。</div>
+    </div>
+  </div>
+
+  <!-- ===== General Tips ===== -->
+  <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+    <h4 style="font-size:1rem;color:#1a1a2e;margin-bottom:14px;">💡 通用 Tips</h4>
+    <ol style="font-size:0.82rem;color:#4b5563;padding-left:20px;line-height:2;">
+      <li><strong>文件路径用绝对路径</strong>：避免 AI 找不到文件</li>
+      <li><strong>分步执行，每步确认</strong>：不要一次要求 AI 完成所有步骤，每个 Prompt 专注一个产出</li>
+      <li><strong>人工审阅不可跳过</strong>：AI 产出后必须人工检查，特别是业务逻辑和优先级判断</li>
+      <li><strong>甲方反馈即时迭代</strong>：如"红包改为不共享"类的决策变更，重新发送对应的修改 Prompt 即可</li>
+      <li><strong>Prompt 可组合使用</strong>：Step 4 + Step 5 可合并发送，AI 会依次执行</li>
+      <li><strong>如果生成结果不理想</strong>：把不满意的地方直接告诉 AI，让它针对性修改，比重新生成更高效</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ===== Section 5: Deliverables ===== -->
+<div class="section" id="sec-5">
+  <div class="section-title"><span class="num">5</span>实际产出物一览</div>
+  <p class="section-desc">以下为本次AI赋能工作流验证项目的全部交付物，从原始语音输入到最终PRD文档，形成完整追溯链。</p>
+
+  <div class="deliverable-grid">
+    <div class="deliverable-card">
+      <div class="dc-icon">📋</div>
+      <div class="dc-title">结构化会议纪要</div>
+      <div class="dc-type">01-原始资料/会议纪要/会议纪要.md</div>
+      <div class="dc-stat">336行 · 5话题 · 12决议 · 11待办 · 5遗留</div>
+    </div>
+    <div class="deliverable-card">
+      <div class="dc-icon">📊</div>
+      <div class="dc-title">需求提炼报告</div>
+      <div class="dc-type">02-需求分析/需求提炼报告.md</div>
+      <div class="dc-stat">8条REQ(P0×6/P1×2) · 2矛盾 · 8沉默信号 · 8待确认</div>
+    </div>
+    <div class="deliverable-card">
+      <div class="dc-icon">📐</div>
+      <div class="dc-title">业务时序图</div>
+      <div class="dc-type">03-PRD/业务时序图.md</div>
+      <div class="dc-stat">3张Mermaid时序图 · 6条流程风险 · 页面流转总览</div>
+    </div>
+    <div class="deliverable-card">
+      <div class="dc-icon">📱</div>
+      <div class="dc-title">移动端交互原型</div>
+      <div class="dc-type">04-原型/移动端交互原型.html</div>
+      <div class="dc-stat">129KB · 13店员页+3消费者页 · 375px适配</div>
+    </div>
+    <div class="deliverable-card">
+      <div class="dc-icon">🖥️</div>
+      <div class="dc-title">后台管理原型</div>
+      <div class="dc-type">04-原型/大单礼活动管理后台原型.html</div>
+      <div class="dc-stat">60KB · 活动列表/详情/门店/办单记录</div>
+    </div>
+    <div class="deliverable-card">
+      <div class="dc-icon">📄</div>
+      <div class="dc-title">HTML PRD需求文档</div>
+      <div class="dc-type">03-PRD/PRD需求文档.html</div>
+      <div class="dc-stat">850行 · 9节目录 · 14条FR追溯矩阵 · 差异识别</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Section 6: Comprehensive Benefit Analysis ===== -->
+<div class="section" id="sec-6">
+  <div class="section-title"><span class="num">6</span>综合效益分析</div>
+  <p class="section-desc">AI赋能不仅带来时间维度的效率提升，更在质量、一致性、风险控制等多个维度产生结构性改善。</p>
+
+  <div class="benefit-grid">
+    <div class="benefit-card">
+      <h4>⏱️ 时间效率</h4>
+      <ul>
+        <li>全流程从 <strong>5~7个工作日 → 1~2个工作日</strong></li>
+        <li>效率提升约 <strong>80%</strong></li>
+        <li>会议纪要整理从3~4h→5min（↑95%）</li>
+        <li>原型生成从2~3天→2h（↑88%）</li>
+        <li>PRD编写从1~1.5天→1h（↑88%）</li>
+      </ul>
+    </div>
+    <div class="benefit-card">
+      <h4>🎯 需求质量</h4>
+      <ul>
+        <li>沉默信号检测：系统识别 <strong>8条</strong>应讨论但被跳过的话题</li>
+        <li>矛盾预识别：甲方内部冲突在需求阶段暴露（非开发阶段）</li>
+        <li>优先级评估标准化：评分矩阵替代主观判断</li>
+        <li>每条REQ可追溯到会议原文</li>
+        <li>行业知识注入超越个人经验边界</li>
+      </ul>
+    </div>
+    <div class="benefit-card">
+      <h4>🔗 文档一致性</h4>
+      <ul>
+        <li><strong>文档=交付物，100%对齐</strong>，消除传统"文档漂移"</li>
+        <li>需求追溯矩阵：14条FR↔12个原型页面↔时序图步骤</li>
+        <li>差异自动识别：2遗漏+3存疑，行内标注</li>
+        <li>以已验证原型为唯一事实源，逆向生成PRD</li>
+        <li>甲方确认轮次从3→1</li>
+      </ul>
+    </div>
+    <div class="benefit-card">
+      <h4>🔄 迭代灵活性</h4>
+      <ul>
+        <li>需求变更仅需修改文本描述，秒级重新生成</li>
+        <li>时序图：Mermaid文本→秒级渲染，无需重画</li>
+        <li>原型：自然语言微调（改颜色/补状态/加弹窗）</li>
+        <li>甲方反馈即时迭代，无需等待设计→开发链路</li>
+        <li>不满意直接告知AI针对性修改，比重做高效</li>
+      </ul>
+    </div>
+    <div class="benefit-card">
+      <h4>👥 团队协作</h4>
+      <ul>
+        <li>角色压缩：<strong>1人+AI</strong>完成传统PM+UI+前端3角色工作</li>
+        <li>甲方可当场点击原型走通全流程，减少"我以为你知道"偏差</li>
+        <li>结构化纪要可直接发送甲方确认，降低二次沟通成本</li>
+        <li>建议话术可直接用于甲方沟通</li>
+        <li>开发按模块独立阅读HTML PRD（左侧导航+Mermaid）</li>
+      </ul>
+    </div>
+    <div class="benefit-card">
+      <h4>🛡️ 风险控制</h4>
+      <ul>
+        <li>流程风险前置标注：时序图中Note标注<strong>6条</strong>风险点</li>
+        <li>异常分支强制枚举：alt/opt语法确保无遗漏</li>
+        <li>坑点提醒：<strong>6条</strong>行业常见坑点+规避建议</li>
+        <li>技术约束预警：<strong>2条</strong>跨系统联动风险</li>
+        <li>待确认事项清单可直接作为与甲方下一轮沟通议程</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Section 7: Key Takeaways ===== -->
+<div class="section" id="sec-7">
+  <div class="section-title"><span class="num">7</span>关键发现与建议</div>
+
+  <div class="summary-box" style="margin-bottom:20px;">
+    <h3>✅ 验证结论</h3>
+    <p>经过雀巢益生菌大单礼买赠活动项目的全流程实战验证，AI赋能产品经理工作流在<span class="highlight">时间效率（↑80%）、需求质量（矛盾前置+沉默信号检测）、文档一致性（100%对齐）、迭代灵活性（秒级修改）</span>四个维度上均显著优于传统工作流。尤其在高频变更、多方协作的B端项目中，AI方案的"实时响应变更"能力是传统流程无法比拟的核心优势。</p>
+  </div>
+
+  <div class="summary-box" style="border-left-color:#f59e0b;">
+    <h3>⚠️ 注意事项与边界</h3>
+    <p>
+      1. <strong>人工审阅不可跳过</strong>：AI产出必须经过PM人工检查，尤其业务逻辑、优先级判断和甲方特有语境的理解。<br>
+      2. <strong>Prompt质量决定产出质量</strong>：Prompt的角色定义、执行步骤、约束条件需精心设计，建议建立团队Prompt模板库。<br>
+      3. <strong>不替代PM核心能力</strong>：AI加速了"信息处理"环节，但需求判断、业务决策、甲方关系管理仍需PM专业能力。<br>
+      4. <strong>适用场景</strong>：本方案在B端功能性需求（表单/流程/报表）中效果最佳；强视觉设计驱动的C端项目建议保留专业UI设计环节。
+    </p>
+  </div>
+
+  <div class="summary-box" style="border-left-color:#10b981;">
+    <h3>🚀 推广建议</h3>
+    <p>
+      1. <strong>项目二组自行建立小组Prompt库</strong>：基于本次验证的5个Prompt模板，由项目二组根据自身项目特点整理和维护小组内部的Prompt库，逐步积累适合团队业务场景的指令模板。<br>
+      2. <strong>各产品经理后续项目采用AI工作流验证</strong>：各产品经理在后续新项目中，以本次验证的AI赋能工作流为参考，自行实践并反馈实际效果，以各自项目数据验证该工作流的适用性和效率提升幅度。<br>
+      3. <strong>量化跟踪</strong>：建立传统vs AI双轨数据采集，持续验证效率提升。<br>
+      4. <strong>迭代Prompt</strong>：根据项目类型和团队反馈，持续优化Prompt模板。
+    </p>
+  </div>
+</div>
+
+<!-- ===== Section 8: Appendix ===== -->
+<div class="section" id="sec-8">
+  <div class="section-title"><span class="num">8</span>附录：项目基本信息</div>
+
+  <div class="comp-table-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr><th style="width:15%">维度</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>项目名称</strong></td><td>雀巢益生菌大单礼买赠活动 · 汇直通 & 能量加油站功能改造</td></tr>
+        <tr><td><strong>涉及系统</strong></td><td>汇直通（门店办单小程序·云机汇）、能量加油站（消费者扫码小程序·云机汇）、三峡（C端兑换小程序·三峡）、雀巢NHS后台</td></tr>
+        <tr><td><strong>核心业务</strong></td><td>从物流配送大单礼→门店现场发放益生菌买赠；同步关闭益生菌扫码红包活动</td></tr>
+        <tr><td><strong>甲方</strong></td><td>Charlene（雀巢）、辉哥（雀巢）</td></tr>
+        <tr><td><strong>乙方（我方）</strong></td><td>Thomas（云机汇/PM）、锦鹏（云机汇/产品）</td></tr>
+        <tr><td><strong>三方</strong></td><td>白文斌（三峡/供应商）</td></tr>
+        <tr><td><strong>原始输入</strong></td><td>2份语音转录（共1576行）+ 20张UI原型截图 + 1份术语基础资料</td></tr>
+        <tr><td><strong>AI工具</strong></td><td>OpenCode / 多模型协作（含minimax-m3等多模态模型）</td></tr>
+        <tr><td><strong>验证周期</strong></td><td>6月08日-6月17日</td></tr>
+        <tr><td><strong>产出文件数</strong></td><td>6份核心文档/原型（3份.md + 3份.html）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== Footer ===== -->
+<div class="footer">
+  <p>AI赋能产品经理工作流 · 效率对比验证报告 V1.0</p>
+  <p>基于雀巢益生菌大单礼买赠活动真实项目实战数据 | 2026年6月</p>
+  <p style="margin-top:8px;">完整Prompt模板与项目产出物详见：项目复盘-4 目录</p>
+</div>
+
+</div><!-- /.main-content -->
+
+<script>
+// Expand first step card by default
+document.querySelectorAll('.step-card').forEach((card, i) => {
+  if (i === 0) card.classList.add('open');
+});
+
+// === Sidebar Toggle (Mobile) ===
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+// Close sidebar when a nav link is clicked (mobile)
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.querySelector('.sidebar-overlay').classList.remove('show');
+  });
+});
+
+// === Scroll Spy: Highlight active nav item ===
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+function updateActiveNav() {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if (top <= 150) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+}
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+// Init on load
+updateActiveNav();
+
+// === Smooth scroll for nav links (already native with CSS scroll-behavior) ===
+
+// Intersection Observer for bar chart animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.bar-seg').forEach(seg => {
+        seg.style.transition = 'all 1s ease';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.bar-chart').forEach(chart => observer.observe(chart));
+
+// === Copy Prompt Button ===
+function copyPrompt(btn) {
+  const codeBlock = btn.closest('.pf-code-block');
+  const body = codeBlock.querySelector('.pf-code-body');
+  const text = body.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '✅ 已复制';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '📋 复制';
+    }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.innerHTML = '✅ 已复制';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '📋 复制';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
