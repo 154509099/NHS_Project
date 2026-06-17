@@ -326,11 +326,10 @@
     <a href="#sec-overview">二、业务流程</a>
     <a href="#sec-participants">三、参与者</a>
     <a href="#sec-forward">四、正向链路</a>
-    <a href="#sec-reverse">五、逆向链路</a>
-    <a href="#sec-zt-scope">六、中台调整范围</a>
-    <a href="#sec-risks">七、流程风险</a>
+    <a href="#sec-zt-scope">五、中台调整范围</a>
+    <a href="#sec-risks">六、流程风险</a>
   </nav>
-  <div class="sidebar-footer">2026-06-14 · v1.0</div>
+  <div class="sidebar-footer">2026-06-17 · v2.1</div>
 </aside>
 
 <!-- ==================== Main ==================== -->
@@ -341,7 +340,7 @@
 <div class="doc-header">
   <h1>小河马线上商城代销雀巢大仓商品 — 需求方案</h1>
   <div class="meta">
-    基于需求提炼报告 | 覆盖完整正向链路和逆向退货链路
+    基于6月17日讨论会结论 | 任务类型+配额维度方案 | 仅正向办单链路
     <span class="tag tag-done">已确认</span>
   </div>
 </div>
@@ -354,14 +353,14 @@
 
   <p>佣金直接打给门店个人不合规，需借助<strong>中台 → 达生</strong>的任务办单链路，以积点形式发放佣金，门店通过达生提现。</p>
 
-  <p>本次仅涉及小河马商城订单的<strong>正向积点结算</strong>和<strong>逆向退货扣减</strong>，不涉及资金预充值。</p>
+  <p>本次仅涉及小河马商城订单的<strong>正向积点结算</strong>，不涉及资金预充值。</p>
   </div>
 </section>
 
 <!-- ==================== 二、业务流程概述 ==================== -->
 <section id="sec-overview">
   <h2>二、业务流程概述</h2>
-  <p>本系统涉及四条核心链路，按执行先后顺序排列：</p>
+  <p>本系统涉及两条核心链路，按执行先后顺序排列：</p>
 
   <table>
     <thead>
@@ -372,25 +371,13 @@
         <td>①</td>
         <td><strong>任务初始化</strong></td>
         <td>达生</td>
-        <td>达生创建长期任务（至年底）→ 通知中台 → 中台维护 SKU 与门店 → 推送小河马 → 账号同步 → 自动领取</td>
+        <td>达生创建按月任务 → A1 推送任务类型到中台 → 中台维护 SKU 与门店（非SFE归虚拟大区）→ 配额增加任务类型维度 → B3 推送小河马（含任务类型）→ 账号同步 → 首次手动领取</td>
       </tr>
       <tr>
         <td>②</td>
         <td><strong>正向下单 → 积点结算</strong></td>
         <td>消费者</td>
-        <td>小河马商城下单支付 → A10 推送中台 → 渠道分流（跳过原中台任务校验）→ 推送达生 → 按"任务+产品"基点发积点</td>
-      </tr>
-      <tr>
-        <td>③</td>
-        <td><strong>逆向退货 → 积点扣减</strong></td>
-        <td>消费者</td>
-        <td>小河马商城退货 → A10 推送退货单 → 中台记录 NHS → 同步达生 → 达生扣减待发放积点</td>
-      </tr>
-      <tr>
-        <td>④</td>
-        <td><strong>大仓发货</strong>（旁路）</td>
-        <td>雀巢大仓</td>
-        <td>大仓根据订单直发快递给消费者，与积点链路解耦</td>
+        <td>小河马商城下单支付 → 确认收货生成虚拟罐底码 → A10 推送中台 → 跳过校验 → A12 推送达生 → 按"任务+产品"基点发积点</td>
       </tr>
     </tbody>
   </table>
@@ -429,41 +416,46 @@ sequenceDiagram
     participant S as 门店店长
     participant CK as 雀巢大仓
 
-    Note over DS,S: ══════ Stage 1: 任务初始化（一次性操作） ══════
+    Note over DS,S: ══════ Stage 1: 任务初始化（按月执行） ══════
 
     rect rgb(240, 255, 240)
-        Note over DS,ZT: ① 达生建任务 → 通知中台
-        DS->>DS: 创建长期特殊任务<br/>有效期：至当年年底<br/>类型：线上商城任务(是否需要 可写死一个任务编号)
-        DS->>ZT: A1 任务信息同步<br/>任务编号、有效期、任务类型
+        Note over DS,ZT: ① 达生建任务 → 推送中台
+        DS->>DS: 创建按月任务<br/>佳膳优选小河马商城任务
+        DS->>ZT: A1 任务信息同步<br/>任务编号、有效期<br/>🆕 任务类型
         activate ZT
 
-        Note over ZT: ② 中台维护 SKU + 门店范围等
-        ZT->>ZT: 维护该任务可参与的 SKU 列表<br/>维护该任务可参与的门店清单
-        ZT->>ZT: 配置：小河马商城任务<br/>配额方案待讨论确认<br/>如需配额，需在现有配额配置页<br/>增加任务编号关联
+        Note over ZT: ② 中台维护 SKU + 门店 + 配额
+        ZT->>ZT: 维护可参与的 SKU 列表<br/>维护门店清单<br/>非SFE架构门店 → 虚拟大区
+        ZT->>ZT: 配额增加任务类型维度<br/>仅需外码配额<br/>内码配额非必填
     end
 
     rect rgb(255, 245, 238)
         Note over ZT,XHM: ③ 推送任务到小河马
-        ZT->>XHM: B3 任务信息推送<br/>任务编号、有效期、门店范围、SKU 列表
+        ZT->>XHM: B3 任务信息推送<br/>任务编号、有效期<br/>🆕 任务类型<br/>门店范围、SKU 列表
         activate XHM
-        XHM->>XHM: 存储任务映射<br/>识别线上商城办单任务
+        XHM->>XHM: 存储任务映射<br/>区分不同任务类型
+    end
+
+    rect rgb(255, 250, 240)
+        Note over ZT,DS: ④ 配额推送达生
+        ZT->>DS: 大区/门店配额推送<br/>🆕 任务类型<br/>达生据此区分扣减
     end
 
     rect rgb(245, 240, 255)
-        Note over XHM,DS: ④ 门店账号同步 → 自动领取
+        Note over XHM,DS: ⑤ 门店账号同步 → 领取任务
         XHM->>ZT: A3-1 门店账号同步<br/>门店信息 + 店主/店员账号
         ZT->>DS: 同步门店账号（关联任务编号）
         activate DS
 
         DS->>DS: 接收账号 → 首次需手动领取
-        Note over DS: 店主/店员账号均可<br/>首次需手动领取长期任务
+        Note over DS: 店主/店员账号均可<br/>首次手动，后续自动领取
 
         DS-->>ZT: A8 领取任务同步
         deactivate DS
         ZT-->>XHM: A9 领取任务推送
         deactivate XHM
 
-        Note over DS: ⑤ 达生配置积点基点<br/>by 产品 by 任务维度
+        Note over DS: ⑥ 达生配置积点基点<br/>by 产品 by 任务维度
         DS->>DS: 配置各 SKU 佣金基点
         deactivate ZT
     end
@@ -471,28 +463,29 @@ sequenceDiagram
     Note over C,S: ══════ Stage 2: 消费者下单 → 积点结算 ══════
 
     rect rgb(240, 248, 255)
-        Note over C,XHM: ⑥ 消费者下单
+        Note over C,XHM: ⑦ 消费者下单
         C->>XHM: 浏览商城，选择商品（佳膳优选），下单支付
         activate XHM
-        Note over XHM: 支付成功，生成订单<br/>仅含 SKU、数量、订单号<br/>无溯源码
-        XHM->>XHM: 生成订单号
+        Note over XHM: 支付成功，生成订单<br/>至少包含 SKU、数量、订单号
 
-        Note over CK: 旁路：大仓根据订单发货
+        Note over CK: 旁路：大仓根据订单发货<br/>（此为示例，实际以小河马流程为准）
         XHM-->>CK: 订单信息（批次号+订单号）
         CK-->>C: 大仓直发快递
+
+        Note over XHM: ⑧ 确认收货（交易成功）<br/>小河马生成虚拟罐底码<br/>HM+年+点+8位随机数<br/>（如 HM26.06X17OO2）
     end
 
     rect rgb(255, 250, 240)
-        Note over XHM,ZT: ⑦ A10 推送办单数据
-        XHM->>ZT: A10 门店任务售出办单数据同步<br/>channelType=XHM_MALL<br/>transactionType=SALE<br/>SKU、数量、订单号<br/>（不传 source_code）
+        Note over XHM,ZT: ⑨ A10 推送办单数据
+        XHM->>ZT: A10 门店任务售出办单数据同步<br/>SKU、数量、订单号<br/>source_code=虚拟罐底码
         deactivate XHM
         activate ZT
 
-        ZT->>ZT: 按 channelType 分流<br/>XHM_MALL → 走商城通道
-        ZT->>ZT: 跳过任务校验、撞库校验<br/>外码：附特定标识开头随机值<br/>外码扫码状态标记为有效<br/>内码：不处理、不传达生
+        ZT->>ZT: 跳过罐底码校验、SIM校验<br/>跳过门店清单校验<br/>数据标记为有效
 
-        Note over ZT,DS: ⑧ 推送达生积点结算
-        ZT->>DS: 推送办单数据<br/>订单号、SKU、数量<br/>外码附随机值+状态有效<br/>内码不传（达生仅以外码判定积点）
+        Note over ZT,DS: ⑩ 推送达生积点结算
+        ZT->>DS: A12推送办单数据<br/>订单号、SKU、数量<br/>虚拟罐底码（状态有效）
+        Note over DS: 达生通过任务编号<br/>自行查询任务类型
         deactivate ZT
         activate DS
 
@@ -505,164 +498,176 @@ sequenceDiagram
     end
     </pre>
   </div>
-
-  <div class="callout callout-info">
-    <strong>📌 退货判断</strong>
-    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验：校验销售单号是否存在、退货数量 ≤ 销售数量、是否重复退货等。
-  </div>
 </section>
 
-<!-- ==================== 五、逆向链路 ==================== -->
-<section id="sec-reverse">
-  <h2>五、逆向链路</h2>
-
-  <div class="mermaid-wrap">
-    <pre class="mermaid">
-sequenceDiagram
-    participant C as 消费者
-    participant XHM as 小河马商城
-    participant HF as 汇付天下
-    participant ZT as 中台(云机汇)
-    participant DS as 达生
-    participant S as 门店店长
-
-    Note over C,S: ═══ 逆向链路：A10 退货单 → NHS记录 → 达生扣减 ═══
-
-    C->>XHM: 发起退货申请
-    activate XHM
-    Note over XHM: ⚠️ 退货申请以小河马商城判断为准<br/>中台做基础校验<br/>（校验销售单号、退货数量、重复退货等）
-
-    rect rgb(255, 240, 240)
-        Note over XHM,HF: ⑨ 小河马退款
-        XHM->>HF: 发起退款
-        activate HF
-        HF->>HF: 处理退款资金回转
-        HF-->>XHM: 退款完成
-        deactivate HF
-
-        Note over XHM,ZT: ⑩ A10 推送退货单（复用同一接口）
-        XHM->>ZT: A10 门店任务售出办单数据同步<br/>channelType=XHM_MALL<br/>transactionType=RETURN<br/>orderId、returnItems: SKU+数量
-
-        alt 部分退货
-            Note over ZT: 接收部分退货明细<br/>按 SKU+数量比例处理
-        else 整单退
-            Note over ZT: 接收整单退货<br/>按订单全额处理
-        end
-        deactivate XHM
-        activate ZT
-
-        ZT->>ZT: 记录退货信息到 NHS 后台<br/>订单号、退货SKU、退货数量
-    end
-
-    rect rgb(255, 245, 238)
-        Note over ZT,DS: ⑪ 同步达生扣减待发放佣金
-        ZT->>DS: 同步退货信息<br/>orderId、SKU、退货数量
-        deactivate ZT
-        activate DS
-
-        DS->>DS: 定位对应门店店主账号<br/>扣减待发放佣金积点
-
-        alt 待发放积点充足
-            DS->>DS: 按退货 SKU+数量<br/>扣减对应积点
-            DS-->>S: 待发放积点余额更新
-            Note over S: 扣减成功
-        else 积点已提现/不足
-            DS->>DS: 扣减失败，达生内部处理
-            Note over DS: 不通知中台<br/>达生侧自行记录处理
-        end
-        deactivate DS
-    end
-    </pre>
-  </div>
-
-  <div class="callout callout-info">
-    <strong>📌 退货判断</strong>
-    小河马商城是否可退货均以小河马渠道推送为准。中台做基础校验：校验销售单号是否存在、退货数量 ≤ 销售数量、是否重复退货等。
-  </div>
-</section>
-
-<!-- ==================== 六、中台调整范围 ==================== -->
+<!-- ==================== 五、中台调整范围 ==================== -->
 <section id="sec-zt-scope">
-  <h2>六、中台调整范围</h2>
+  <h2>五、中台调整范围</h2>
 
-  <h3>1️⃣ 正向链路</h3>
+  <h3>中台改造内容</h3>
+
+  <h3>1. 新增「任务类型」字段</h3>
 
   <div class="card">
-    <h3>1. 配额相关</h3>
-    <div class="callout callout-warn">
-      <strong>⚠️ 待定</strong>
-      配额方案待讨论确认。如需限制大区配额和门店配额，需在现有配额配置页面增加任务编号关联，按任务维度配置配额。
+    <h3>1.1 方案概述</h3>
+    <p>采用<strong>任务类型（taskType）</strong>字段，在现有任务-配额链路中增加区分维度。中台数据库已有该字段，无需新增数据库字段。</p>
+    <div class="callout callout-info">
+      <strong>📌 核心变化</strong>
+      达生创建任务时通过 <code>A1</code> 接口推送任务类型，中台接收并存储，不再由中台侧手动维护。
     </div>
   </div>
 
   <div class="card">
-    <h3>2. A10 门店任务售出办单数据同步接口 — 字段变更</h3>
+    <h3>1.2 新增任务类型的接口清单（4个）</h3>
+    <table>
+      <thead>
+        <tr><th>接口编号</th><th>接口名称</th><th>方向</th><th>改动内容</th><th>影响方</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A1</strong></td>
+          <td>任务信息同步</td>
+          <td>达生 → 中台</td>
+          <td>达生创建任务后将任务主数据同步给中台，新增 <code>任务类型</code> 字段</td>
+          <td>达生侧配合改造</td>
+        </tr>
+        <tr>
+          <td><strong>B2</strong></td>
+          <td>大区配额同步</td>
+          <td>中台 → 达生</td>
+          <td>配额推送时新增 <code>任务类型</code> 字段，达生据此区分不同任务的配额扣减</td>
+          <td>达生侧配合改造</td>
+        </tr>
+        <tr>
+          <td><strong>B1</strong></td>
+          <td>门店配额同步</td>
+          <td>中台 → 达生</td>
+          <td>配额推送时新增 <code>任务类型</code> 字段，达生据此区分不同任务的配额扣减</td>
+          <td>达生侧配合改造</td>
+        </tr>
+        <tr>
+          <td><strong>B3</strong></td>
+          <td>任务信息推送</td>
+          <td>中台 → 小河马</td>
+          <td>中台将任务数据推送给小河马，新增 <code>任务类型</code> 字段，小河马据此区分不同任务并关联正确任务编号</td>
+          <td>小河马需区分不同任务类型</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <strong>📌 不新增任务类型、但逻辑受影响的接口</strong>
+      <table style="margin-top:8px">
+        <thead><tr><th>接口编号</th><th>接口名称</th><th>方向</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A2</strong></td><td>任务门店范围推送</td><td>中台 → 小河马</td><td>门店范围推送时需包含虚拟大区门店</td></tr>
+          <tr><td><strong>A3</strong></td><td>门店信息同步</td><td>小河马 → 中台</td><td>小河马根据推送的门店编码回传虚拟大区门店数据</td></tr>
+          <tr><td><strong>A10</strong></td><td>门店任务售出办单数据同步</td><td>小河马 → 中台</td><td>办单推送不改动；中台推送达生时不传任务类型，达生通过任务编号自行查询</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>2. 配额拆分</h3>
+
+  <div class="card">
+    <h3>2.1 配额维度改造</h3>
+    <p>大区配额和门店配额均增加<strong>任务类型维度</strong>，同一大区/门店可按任务类型拆成多条配额记录，互不挤占。现有配额配置页面调整，支持按任务类型维护配额。</p>
+    <table>
+      <thead>
+        <tr><th>配额类型</th><th>是否必填</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>外码配额</strong></td>
+          <td>✅ 必填</td>
+          <td>门店办单出库扫描罐底码消耗，本次小河马佳膳优选活动仅需配置外码配额</td>
+        </tr>
+        <tr>
+          <td><strong>内码配额</strong></td>
+          <td>⚠️ 非必填</td>
+          <td>消费者扫码参与营销活动消耗，本次小河马佳膳优选活动不需要配置内码配额</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:8px"><strong>示例：某门店同时参与两类任务</strong></p>
+    <table>
+      <thead>
+        <tr><th>门店</th><th>任务类型</th><th>外码配额</th><th>内码配额</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>门店 A</td><td>扫码红包</td><td>80</td><td>80</td></tr>
+        <tr><td>门店 A</td><td>小河马佳膳优选</td><td>50</td><td>—（不填）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3. 非 SFE 架构门店处理</h3>
+
+  <div class="card">
+    <h3>3.1 门店归类方案</h3>
+    <table>
+      <thead>
+        <tr><th>场景</th><th>处理方式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>门店在 SFE 架构内</strong></td>
+          <td>按现有逻辑，保留原有大区信息（东/西/南/北/中）</td>
+        </tr>
+        <tr>
+          <td><strong>门店不在 SFE 架构内</strong></td>
+          <td>需先在后台维护该门店信息，并将大区赋值为<strong>虚拟大区编码</strong>（名称待定），纳入配额体系</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:8px">涉及接口：<strong>A2</strong>（中台→渠道，门店范围推送含虚拟大区门店）、<strong>A3</strong>（渠道→中台，小河马回传虚拟大区门店数据）。虚拟大区仅作为兜底归类，不与真实 SFE 架构冲突。</p>
+  </div>
+
+  <h3>4. A10 接口字段变更</h3>
+
+  <div class="card">
     <table>
       <thead>
         <tr><th>字段</th><th>原状态</th><th>新状态</th><th>说明</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>channelType</code>（业务类型）</td>
-          <td>—</td>
-          <td><span class="tag tag-new">🆕 新增</span></td>
-          <td>枚举：<code>XHM_MALL</code>（小河马商城）/ <code>TASK_REDPACKET</code>（任务红包）</td>
-        </tr>
-        <tr>
-          <td><code>transactionType</code>（交易类型/订单类型）</td>
-          <td>—</td>
-          <td><span class="tag tag-new">🆕 新增</span></td>
-          <td>枚举：<code>SALE</code>（销售单）/ <code>RETURN</code>（退货单）</td>
-        </tr>
-        <tr>
-          <td><code>source_code</code>（溯源码）</td>
+          <td><code>source_code</code>（溯源码/罐底码）</td>
           <td><strong>必填</strong></td>
-          <td><span class="tag tag-new">🆕 改为非必填</span></td>
-          <td>小河马商城订单无溯源码，该字段改为非必填</td>
+          <td><span class="tag tag-new">🆕 非必填</span></td>
+          <td>小河马商城订单无实物罐底码，改为非必填；小河马自行生成虚拟罐底码传入</td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <h3>5. 任务有效期</h3>
+
   <div class="card">
-    <h3>3. 小河马商城渠道处理逻辑</h3>
-    <p>当 <code>channelType = XHM_MALL</code> 时：</p>
+    <p>新任务沿用现有逻辑：<strong>按月推送</strong>，首次需手动领取，后续自动领取。配额按月维护，与现有扫码红包体系一致。</p>
+  </div>
+
+  <h3>6. 小河马侧配合内容</h3>
+
+  <div class="card">
     <ul class="dec-list">
-      <li>中台<strong>不进行</strong>原有的任务逻辑校验</li>
-      <li>直接以<strong>有效状态</strong>通过 <strong>A12-中台推送消费者开罐扫码数据</strong>接口推送达生</li>
-      <li>内码的扫码数据<strong>不传</strong></li>
-      <li><code>source_code</code> 需生成一个<strong>特殊标识开头的随机字符串</strong>，标记为虚拟生成的溯源码（建议由小河马侧生成提供）</li>
+      <li><strong>交易成功后才推送办单数据</strong>到中台 A10 接口</li>
+      <li><strong>自行生成虚拟罐底码</strong>，编码规则：<code>HM</code> + 年 + 点 + 8位随机数（示例：<code>HM26.06X17OO2</code>），不与雀巢现有罐底码规则冲突</li>
+      <li>A10 推送时 <code>source_code</code> 字段使用该虚拟罐底码</li>
+      <li>接收 B3 推送的 <code>任务类型</code> 字段，用于区分不同任务并关联正确任务编号</li>
     </ul>
   </div>
 
-  <h3>2️⃣ 逆向链路</h3>
-
-  <div class="card">
-    <h3>1. 逆向退货流程</h3>
-    <ul class="dec-list">
-      <li>逆向链路为<strong>新增流程</strong>，仍复用 <strong>A10-门店任务售出办单数据同步</strong>接口</li>
-      <li>当 <code>transactionType = RETURN</code> 时，中台接收小河马的退货订单数量</li>
-      <li>中台进行<strong>基础校验</strong>：
-        <ul class="dec-list">
-          <li>校验销售单号在中台是否存在</li>
-          <li>校验退货SKU是否存在于原销售单中</li>
-          <li>退货数量不能大于该笔订单的销售数量</li>
-          <li>校验该笔订单是否已全额退货（防止重复退）</li>
-        </ul>
-      </li>
-      <li>中台接收到退货订单后，存入<strong>单独的退货记录表</strong>，并与售出单进行关联</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>2. 通知达生退货处理</h3>
-    <p>中台通过 <strong>A12-中台推送消费者开罐扫码数据</strong>接口通知达生进行退货单处理，其中<strong>产品售出数量为负数</strong>。</p>
+  <div class="callout callout-info">
+    <strong>📌 完整办单数据流</strong>
+    达生按月创建任务(A1+任务类型) → 中台维护SKU/门店/配额(任务类型维度) → B3推送小河马(含任务类型) → 小河马下单 → 确认收货生成虚拟罐底码 → A10推送中台 → 跳过校验 → A12推送达生 → 达生按任务编号查任务类型 → 计算基点 → 门店佣金结算。<br><br>
+    <strong>逆向流：暂时不考虑。</strong>如有线下退货，由门店自行处理，不进入中台-达生链路。
   </div>
 </section>
 
-<!-- ==================== 七、识别的流程风险 ==================== -->
+<!-- ==================== 六、识别的流程风险 ==================== -->
 <section id="sec-risks">
-  <h2>七、识别的流程风险</h2>
+  <h2>六、识别的流程风险</h2>
 
   <table>
     <thead>
@@ -672,26 +677,20 @@ sequenceDiagram
       <tr>
         <td><strong>R1：达生仅以外码判定积点的兼容性</strong></td>
         <td>图4</td>
-        <td>中台对 XHM_MALL 订单：外码附随机值+标记有效，内码不处理不传达生。达生仅以外码状态判定积点发放是否可行？</td>
-        <td>需与达生确认：仅接收外码随机值+有效状态，不接收内码，达生校验是否通过</td>
+        <td>小河马生成虚拟罐底码推送给中台，中台以有效状态推送达生。达生是否接受虚拟罐底码并正常计算基点？</td>
+        <td>需与达生确认：接收虚拟罐底码（HM前缀随机值），按现有逻辑计算基点是否通过</td>
       </tr>
       <tr>
-        <td><strong>R2：A10 同时承载正向和逆向</strong></td>
-        <td>图4/5</td>
-        <td>同一接口通过 transactionType 区分 SALE/RETURN，接口复杂度增加</td>
-        <td>确保幂等性设计：订单号+transactionType 作为幂等键</td>
-      </tr>
-      <tr>
-        <td><strong>R3：门店绑定链路缺失</strong></td>
+        <td><strong>R2：门店绑定链路缺失</strong></td>
         <td>图4</td>
         <td>账号同步假设小河马已有门店绑定机制，但消费者如何映射到门店未确认</td>
         <td>需与小河马（panda）确认消费者→门店的绑定方式，否则佣金归属无法闭环</td>
       </tr>
       <tr>
-        <td><strong>R4：长期任务对达生按月管理的影响</strong></td>
-        <td>图4</td>
-        <td>现有任务按月管理，至年底的长期任务可能触发达生过期清理逻辑</td>
-        <td>与达生确认长期任务对现有调度/清理机制的影响</td>
+        <td><strong><span class="tag tag-pending">待定</span> R3：SIM架构门店冲突</strong></td>
+        <td>图4 ②</td>
+        <td>梦阳提供的门店名单若与SFE/SIM架构内已有门店重复，该门店不能参加小河马商城活动。中台提供名单后需与SFE架构匹配，若架构中存在则需手动剔除该门店。</td>
+        <td>需与梦阳确认门店名单与SFE架构的重叠范围；中台需增加SFE架构门店匹配+剔除逻辑</td>
       </tr>
     </tbody>
   </table>
@@ -699,7 +698,7 @@ sequenceDiagram
 
 <!-- Footer -->
 <div class="doc-footer">
-  生成时间：2026-06-14 · 基于用户确认的完整链路描述更新
+  更新日期：2026-06-17 · 基于6月17日中台改造方案讨论会结论更新（v2.1）
 </div>
 
 </div><!-- .container -->
