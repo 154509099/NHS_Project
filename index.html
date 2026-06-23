@@ -371,7 +371,7 @@
         <td>①</td>
         <td><strong>任务初始化</strong></td>
         <td>达生</td>
-        <td>达生创建按月任务 → A1 推送任务类型到中台 → 中台维护 SKU 与门店（非SFE归虚拟大区）→ 配额增加任务类型维度 → B3 推送小河马（含任务类型）→ 账号同步 → 首次手动领取</td>
+        <td>达生创建按月任务 → A1 推送 <span class="tag tag-new">🆕 任务类型</span> 到中台 → 中台维护 SKU 与门店（非SFE归虚拟大区）→ 配额增加 <span class="tag tag-new">🆕 任务类型维度</span> → B3 推送小河马（含 <span class="tag tag-new">🆕 任务类型</span>）→ 账号同步 → 首次手动领取</td>
       </tr>
       <tr>
         <td>②</td>
@@ -481,7 +481,7 @@ sequenceDiagram
         deactivate XHM
         activate ZT
 
-        ZT->>ZT: 跳过罐底码校验、SIM校验<br/>跳过门店清单校验<br/>数据标记为有效
+        ZT->>ZT: 跳过罐底码校验、SIM校验<br/>数据标记为有效
 
         Note over ZT,DS: ⑩ 推送达生积点结算
         ZT->>DS: A12推送办单数据<br/>订单号、SKU、数量<br/>虚拟罐底码（状态有效）
@@ -571,7 +571,7 @@ sequenceDiagram
 
   <div class="card">
     <h3>2.1 配额维度改造</h3>
-    <p>大区配额和门店配额均增加<strong>任务类型维度</strong>，同一大区/门店可按任务类型拆成多条配额记录，互不挤占。现有配额配置页面调整，支持按任务类型维护配额。</p>
+    <p>大区配额和门店配额均<strong>新增<span class="tag tag-new">🆕</span>任务类型维度</strong>，同一大区/门店可按任务类型拆成多条配额记录，互不挤占。现有配额配置页面调整，支持按 <span class="tag tag-new">🆕 任务类型</span> 维护配额。</p>
     <table>
       <thead>
         <tr><th>配额类型</th><th>是否必填</th><th>说明</th></tr>
@@ -654,13 +654,13 @@ sequenceDiagram
       <li><strong>交易成功后才推送办单数据</strong>到中台 A10 接口</li>
       <li><strong>自行生成虚拟罐底码</strong>，编码规则：<code>HM</code> + 年 + 点 + 8位随机数（示例：<code>HM26.06X17OO2</code>），不与雀巢现有罐底码规则冲突</li>
       <li>A10 推送时 <code>source_code</code> 字段使用该虚拟罐底码</li>
-      <li>接收 B3 推送的 <code>任务类型</code> 字段，用于区分不同任务并关联正确任务编号</li>
+      <li>接收 B3 推送的 <span class="tag tag-new">🆕</span> <code>任务类型</code> 字段，用于区分不同任务并关联正确任务编号</li>
     </ul>
   </div>
 
   <div class="callout callout-info">
     <strong>📌 完整办单数据流</strong>
-    达生按月创建任务(A1+任务类型) → 中台维护SKU/门店/配额(任务类型维度) → B3推送小河马(含任务类型) → 小河马下单 → 确认收货生成虚拟罐底码 → A10推送中台 → 跳过校验 → A12推送达生 → 达生按任务编号查任务类型 → 计算基点 → 门店佣金结算。<br><br>
+    达生按月创建任务(A1+🆕任务类型) → 中台维护SKU/门店/配额(🆕任务类型维度) → B3推送小河马(含🆕任务类型) → 小河马下单 → 确认收货生成虚拟罐底码 → A10推送中台 → 跳过校验 → A12推送达生 → 达生按任务编号查任务类型 → 计算基点 → 门店佣金结算。<br><br>
     <strong>逆向流：暂时不考虑。</strong>如有线下退货，由门店自行处理，不进入中台-达生链路。
   </div>
 </section>
