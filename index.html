@@ -341,7 +341,8 @@
   <h1>小河马线上商城代销雀巢大仓商品 — 需求方案</h1>
   <div class="meta">
     基于6月17日讨论会结论 | 任务类型+配额维度方案 | 仅正向办单链路
-    <span class="tag tag-done">已确认</span>
+     <span class="tag tag-done">已确认</span>
+    <div class="callout callout-warn"><strong>⚠️ 免责声明</strong> 该需求方案仅对中台调整内容负责，达生侧、小河马侧具体的实现逻辑，以各方实际评估为准，需求方案里的内容仅供参考。</div>
   </div>
 </div>
 
@@ -377,7 +378,7 @@
         <td>②</td>
         <td><strong>正向下单 → 积点结算</strong></td>
         <td>消费者</td>
-        <td>小河马商城下单支付 → 确认收货生成虚拟罐底码 → A10 推送中台 → 跳过校验 → A12 推送达生 → 按"任务+产品"基点发积点</td>
+        <td>小河马商城下单支付 → 确认收货生成虚拟罐底码 → A10 推送中台 → 专用任务走校验 → A12 推送达生 → 按"任务+产品"发积点</td>
       </tr>
     </tbody>
   </table>
@@ -394,7 +395,7 @@
       <tr><td>消费者</td><td>终端用户</td><td>在小河马商城下单、收货、退货</td></tr>
       <tr><td>小河马商城</td><td>小河马线上商城</td><td>消费者下单入口，通过 A10 推送订单到中台</td></tr>
       <tr><td>中台(云机汇)</td><td>雀巢任务中台（NHS）</td><td>任务/SKU/门店维护、订单接收、渠道分流、数据推送</td></tr>
-      <tr><td>达生</td><td>达生系统</td><td>任务创建与领取、积点基点配置、积点结算与发放、扣减</td></tr>
+      <tr><td>达生</td><td>达生系统</td><td>任务创建与领取、积点配置、积点结算与发放、扣减</td></tr>
       <tr><td>门店店长</td><td>母婴店店主</td><td>佣金接收方，在达生提现</td></tr>
       <tr><td>雀巢大仓</td><td>雀巢粤海仓</td><td>大仓直发商品给消费者</td></tr>
       <tr><td>汇付天下</td><td>支付分账平台</td><td>小河马侧支付分账服务</td></tr>
@@ -455,8 +456,8 @@ sequenceDiagram
         ZT-->>XHM: A9 领取任务推送
         deactivate XHM
 
-        Note over DS: ⑥ 达生配置积点基点<br/>by 产品 by 任务维度
-        DS->>DS: 配置各 SKU 佣金基点
+        Note over DS: ⑥ 达生配置积点<br/>by 产品 by 任务维度
+        DS->>DS: 配置各 SKU 佣金积点
         deactivate ZT
     end
 
@@ -481,7 +482,7 @@ sequenceDiagram
         deactivate XHM
         activate ZT
 
-        ZT->>ZT: 跳过罐底码校验、SIM校验<br/>数据标记为有效
+        ZT->>ZT: 专用任务 → 6维度校验<br/>全部通过后数据标记为有效
 
         Note over ZT,DS: ⑩ 推送达生积点结算
         ZT->>DS: A12推送办单数据<br/>订单号、SKU、数量<br/>虚拟罐底码（状态有效）
@@ -561,10 +562,73 @@ sequenceDiagram
         <tbody>
           <tr><td><strong>A2</strong></td><td>任务门店范围推送</td><td>中台 → 小河马</td><td>门店范围推送时需包含虚拟大区门店</td></tr>
           <tr><td><strong>A3</strong></td><td>门店信息同步</td><td>小河马 → 中台</td><td>小河马根据推送的门店编码回传虚拟大区门店数据</td></tr>
-          <tr><td><strong>A10</strong></td><td>门店任务售出办单数据同步</td><td>小河马 → 中台</td><td>办单推送不改动；中台推送达生时不传任务类型，达生通过任务编号自行查询</td></tr>
+          <tr><td><strong>A10</strong></td><td>门店任务售出办单数据同步</td><td>小河马 → 中台</td><td>办单推送不改动；专用任务需经 6 维度校验；中台推送达生时不传任务类型，达生通过任务编号自行查询</td></tr>
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="card">
+    <h3>1.3 A1-任务信息同步 — 新增字段</h3>
+    <table>
+      <thead>
+        <tr><th>字段名</th><th>字段说明</th><th>是否必填</th><th>备注</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>task_type</code></td>
+          <td>任务类型</td>
+          <td><span class="tag tag-p0">必需</span></td>
+          <td>任务类型：1 红包任务；2 专用任务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>1.4 B1-门店配额同步接口 — 新增字段</h3>
+    <table>
+      <thead>
+        <tr><th>字段名</th><th>字段说明</th><th>是否必填</th><th>备注</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>task_type</code></td>
+          <td>任务类型</td>
+          <td><span class="tag tag-p0">必需</span></td>
+          <td>任务类型：1 红包任务；2 专用任务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>1.5 B3-任务信息推送 — 新增字段</h3>
+    <table>
+      <thead>
+        <tr><th>字段名</th><th>字段说明</th><th>是否必填</th><th>备注</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>task_type</code></td>
+          <td>任务类型</td>
+          <td><span class="tag tag-p0">必需</span></td>
+          <td>任务类型：1 红包任务；2 专用任务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>1.6 中台后台相关表调整</h3>
+    <p>因新增任务类型字段，中台后台以下表的列表字段和导出和筛选均需增加<strong>任务类型</strong>：</p>
+    <table>
+      <thead><tr><th>表名</th><th>调整内容</th></tr></thead>
+      <tbody>
+        <tr><td><strong>办单记录</strong></td><td>列表字段、导出和筛选增加任务类型</td></tr>
+        <tr><td><strong>扫码记录</strong></td><td>列表字段、导出和筛选增加任务类型</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <h3>2. 配额拆分</h3>
@@ -585,7 +649,7 @@ sequenceDiagram
         <tr>
           <td><strong>内码配额</strong></td>
           <td>⚠️ 非必填</td>
-          <td>消费者扫码参与营销活动消耗，本次小河马佳膳优选活动不需要配置内码配额</td>
+          <td>消费者扫码参与营销活动消耗，本次小河马佳膳优选活动不需要配置内码配额，非必填时实际传给达生为 0</td>
         </tr>
       </tbody>
     </table>
@@ -595,8 +659,8 @@ sequenceDiagram
         <tr><th>门店</th><th>任务类型</th><th>外码配额</th><th>内码配额</th></tr>
       </thead>
       <tbody>
-        <tr><td>门店 A</td><td>扫码红包</td><td>80</td><td>80</td></tr>
-        <tr><td>门店 A</td><td>小河马佳膳优选</td><td>50</td><td>—（不填）</td></tr>
+        <tr><td>门店 A</td><td>红包任务</td><td>80</td><td>80</td></tr>
+        <tr><td>门店 A</td><td>专用任务</td><td>50</td><td>—（不填）</td></tr>
       </tbody>
     </table>
   </div>
@@ -621,22 +685,96 @@ sequenceDiagram
       </tbody>
     </table>
     <p style="margin-top:8px">涉及接口：<strong>A2</strong>（中台→渠道，门店范围推送含虚拟大区门店）、<strong>A3</strong>（渠道→中台，小河马回传虚拟大区门店数据）。虚拟大区仅作为兜底归类，不与真实 SFE 架构冲突。</p>
+    <div class="callout callout-info">
+      <strong>📌 导入任务门店的大区取值逻辑</strong>
+      中台在导入任务门店时，优先取 SFE 架构中的门店大区；若门店不在 SFE 架构内，则取非 SFE 架构门店的虚拟大区。
+    </div>
   </div>
 
-  <h3>4. A10 接口字段变更</h3>
+  <h3>4. 专用任务 A10 办单校验逻辑</h3>
 
   <div class="card">
+    <h3>4.1 校验规则概述</h3>
+    <p>小河马通过 A10 接口推送办单数据到中台后，若任务编号属于<strong>专用任务（task_type=2）</strong>，不走原有的罐底码校验和 SIM 校验，改为按以下 6 个维度逐项校验。<strong>命中任意一条即终止并返回对应错误原因给小河马</strong>；全部通过后数据标记为有效，进入后续 A12 推送流程。</p>
+    <div class="callout callout-warn">
+      <strong>⚠️ 命中即终止</strong>
+      以下 1-6 订单维度的判断，命中任意一个即结束，返给小河马对应错误原因。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>4.2 校验维度一：任务时间校验</h3>
     <table>
-      <thead>
-        <tr><th>字段</th><th>原状态</th><th>新状态</th><th>说明</th></tr>
-      </thead>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
       <tbody>
-        <tr>
-          <td><code>source_code</code>（溯源码/罐底码）</td>
-          <td><strong>必填</strong></td>
-          <td>必填（不变）</td>
-          <td>保持必填；小河马自行生成虚拟罐底码传入</td>
-        </tr>
+        <tr><td>办单时间</td><td>需满足任务领取时间至任务完成截止时间范围内</td><td>不在任务有效期内</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.3 校验维度二：任务相关校验</h3>
+    <table>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
+      <tbody>
+        <tr><td>任务是否存在</td><td>任务编号需存在于中台</td><td>任务不存在</td></tr>
+        <tr><td>任务 + 领取记录状态</td><td>任务及领取记录未被禁用</td><td>任务已禁用</td></tr>
+        <tr><td>任务归属</td><td>任务需属于该门店 + 该账户</td><td>任务不属于该门店+用户</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.4 校验维度三：门店相关校验</h3>
+    <table>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
+      <tbody>
+        <tr><td>门店是否存在</td><td>门店编号需存在于中台</td><td>门店不存在</td></tr>
+        <tr><td>门店渠道状态</td><td>门店在渠道侧未被禁用</td><td>门店状态为禁用(渠道)</td></tr>
+        <tr><td>门店中台状态</td><td>门店在中台侧状态有效</td><td>门店状态为无效(中台)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.5 校验维度四：账户相关校验</h3>
+    <table>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
+      <tbody>
+        <tr><td>账户是否存在</td><td>账户需存在于中台</td><td>账户不存在</td></tr>
+        <tr><td>账户渠道状态</td><td>账户在渠道侧未被禁用</td><td>账户状态为禁用(渠道)</td></tr>
+        <tr><td>账户中台状态</td><td>账户在中台侧状态有效</td><td>账户状态为无效(中台)</td></tr>
+        <tr><td>门店关联账户状态</td><td>门店关联的账户状态有效</td><td>门店关联账户状态为无效</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.6 校验维度五：SKU 映射关系校验</h3>
+    <table>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
+      <tbody>
+        <tr><td>溯源码渠道 SKU 与中台 SKU 映射</td><td>任意溯源码的 SKU 编码需在中台存在映射关系</td><td>SKU编码不存在映射关系</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.7 校验维度六：任务 SKU 范围校验</h3>
+    <table>
+      <thead><tr><th>校验项</th><th>校验规则</th><th>不通过时返回</th></tr></thead>
+      <tbody>
+        <tr><td>任务 SKU 与任务关系</td><td>任意溯源码的 SKU 编码需在任务配置的 SKU 范围内</td><td>不在任务SKU范围内</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4.8 A10 接口字段说明</h3>
+    <table>
+      <thead><tr><th>字段</th><th>原状态</th><th>新状态</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>source_code</code>（溯源码/罐底码）</td><td><strong>必填</strong></td><td>必填（不变）</td><td>保持必填；小河马自行生成虚拟罐底码传入</td></tr>
       </tbody>
     </table>
   </div>
@@ -660,7 +798,7 @@ sequenceDiagram
 
   <div class="callout callout-info">
     <strong>📌 完整办单数据流</strong>
-    达生按月创建任务(A1+🆕任务类型) → 中台维护SKU/门店/配额(🆕任务类型维度) → B3推送小河马(含🆕任务类型) → 小河马下单 → 确认收货生成虚拟罐底码 → A10推送中台 → 跳过校验 → A12推送达生 → 达生按任务编号查任务类型 → 计算基点 → 门店佣金结算。<br><br>
+    达生按月创建任务(A1+🆕任务类型) → 中台维护SKU/门店/配额(🆕任务类型维度) → B3推送小河马(含🆕任务类型) → 小河马下单 → 确认收货生成虚拟罐底码 → A10推送中台 → 专用任务6维度校验 → A12推送达生 → 达生按任务编号查任务类型 → 计算积点 → 门店佣金结算。<br><br>
     <strong>逆向流：暂时不考虑。</strong>如有线下退货，由门店自行处理，不进入中台-达生链路。
   </div>
 </section>
@@ -677,8 +815,8 @@ sequenceDiagram
       <tr>
         <td><strong>R1：达生仅以外码判定积点的兼容性</strong></td>
         <td>图4</td>
-        <td>小河马生成虚拟罐底码推送给中台，中台以有效状态推送达生。达生是否接受虚拟罐底码并正常计算基点？</td>
-        <td>需与达生确认：接收虚拟罐底码（HM前缀随机值），按现有逻辑计算基点是否通过</td>
+        <td>小河马生成虚拟罐底码推送给中台，中台以有效状态推送达生。达生是否接受虚拟罐底码并正常计算积点？</td>
+        <td>需与达生确认：接收虚拟罐底码（HM前缀随机值），按现有逻辑计算积点是否通过</td>
       </tr>
       <tr>
         <td><strong>R2：门店绑定链路缺失</strong></td>
@@ -686,19 +824,14 @@ sequenceDiagram
         <td>账号同步假设小河马已有门店绑定机制，但消费者如何映射到门店未确认</td>
         <td>需与小河马（panda）确认消费者→门店的绑定方式，否则佣金归属无法闭环</td>
       </tr>
-      <tr>
-        <td><strong><span class="tag tag-pending">待定</span> R3：SIM架构门店冲突</strong></td>
-        <td>图4 ②</td>
-        <td>梦阳提供的门店名单若与SFE/SIM架构内已有门店重复，该门店不能参加小河马商城活动。中台提供名单后需与SFE架构匹配，若架构中存在则需手动剔除该门店。</td>
-        <td>需与梦阳确认门店名单与SFE架构的重叠范围；中台需增加SFE架构门店匹配+剔除逻辑</td>
-      </tr>
     </tbody>
   </table>
 </section>
 
+
 <!-- Footer -->
 <div class="doc-footer">
-  更新日期：2026-06-17 · 基于6月17日中台改造方案讨论会结论更新（v2.1）
+  更新日期：2026-06-24 · 新增A10专用任务6维度校验逻辑（v2.2）
 </div>
 
 </div><!-- .container -->
